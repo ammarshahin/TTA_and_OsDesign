@@ -32,7 +32,7 @@ int main(void)
     din.pin = SWITCH_PIN;
     din.pullUpEn = true;
     din.dinputID = SWITCH_INPUT;
-    din.shortPressMultiplier = 100;
+    din.shortPressMultiplier = 20;
     din.longPressMultiplier = 10000;
     dinputModule_init(&din);
 
