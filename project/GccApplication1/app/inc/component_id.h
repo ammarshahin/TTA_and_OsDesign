@@ -3,6 +3,7 @@
 
 typedef enum
 {
+    SWITCH_INPUT,
     DINPUT_DEVICES_NUM
 } dinputID_t;
 
@@ -14,6 +15,7 @@ typedef enum
 typedef enum
 {
     HEARTBIT_OUTPUT,
+    SWITCH_OUTPUT,
     DOUTPUT_DEVICES_NUM
 } doutputID_t;
 typedef enum

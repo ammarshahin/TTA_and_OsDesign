@@ -6,6 +6,7 @@
 #include "bsp.h"
 #include "mcal_atmega328p.h"
 #include "doutput_module.h"
+#include "component/dinput_module/dinput_module.h"
 
 void doutput_module_test(void);
 
@@ -18,6 +19,22 @@ int main(void)
     dout.gpio.ioState = GPIO_OUTPUT;
     dout.outputID = HEARTBIT_OUTPUT;
     doutputModule_init(&dout);
+
+    dout.gpio.port = SWITCH_LED_PORT;
+    dout.gpio.pin = SWITCH_LED_PIN;
+    dout.gpio.state = SWITCH_LED_INIT_STATE;
+    dout.gpio.ioState = GPIO_OUTPUT;
+    dout.outputID = SWITCH_OUTPUT;
+    doutputModule_init(&dout);
+
+    dinputModule_t din;
+    din.port = SWITCH_PORT;
+    din.pin = SWITCH_PIN;
+    din.pullUpEn = true;
+    din.dinputID = SWITCH_INPUT;
+    din.shortPressMultiplier = 100;
+    din.longPressMultiplier = 10000;
+    dinputModule_init(&din);
 
     // gpio_t x_heartbeat;
     // x_heartbeat.port = HEARTBEAT_LED_PORT;
@@ -48,6 +65,7 @@ int main(void)
     {
         doutput_module_test();
         doutputModule_update(NULL);
+        dinputModule_update(NULL);
         //heartbeat_update(NULL);
         _delay_ms(1);
     }
@@ -55,11 +73,11 @@ int main(void)
 
 void doutput_module_test(void)
 {
+    doutputModule_state_set(SWITCH_OUTPUT, (gpio_state_t)dinputModule_state_get(SWITCH_INPUT));
     static uint8_t state = MCAL_GPIO_HIGH;
-
     static uint16_t internalTimer = 0;
     internalTimer++;
-    if (internalTimer < 20)
+    if (internalTimer < 500)
     {
         return;
     }

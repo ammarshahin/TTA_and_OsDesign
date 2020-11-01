@@ -11,8 +11,15 @@
 #define HEARTBEAT_LED_PIN (GPIO_PIN0)
 #define HEARTBEAT_LED_INIT_STATE (GPIO_LOW)
 
+#define SWITCH_LED_PORT (GPIO_PORTC)
+#define SWITCH_LED_PIN (GPIO_PIN1)
+#define SWITCH_LED_INIT_STATE (GPIO_LOW)
+
 /*********************************************************************/
 // dinput
+#define SWITCH_PORT (GPIO_PORTB)
+#define SWITCH_PIN (GPIO_PIN0)
+#define SWITCH_INIT_STATE (GPIO_LOW)
 
 /*********************************************************************/
 // doutput
