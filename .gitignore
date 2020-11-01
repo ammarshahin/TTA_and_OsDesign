@@ -1,0 +1,7 @@
+.vscode
+project/.vs
+*.atsln
+project/GccApplication1/Debug
+*.xml
+*.cproj
+
