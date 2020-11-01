@@ -72,6 +72,7 @@ C_SRCS +=  \
 app/app.c \
 app/app_startup.c \
 app/bsp.c \
+component/doutput_module/doutput_module.c \
 component/heartbeat/heartbeat.c \
 driver/gpio/gpio.c \
 main.c \
@@ -90,6 +91,7 @@ OBJS +=  \
 app/app.o \
 app/app_startup.o \
 app/bsp.o \
+component/doutput_module/doutput_module.o \
 component/heartbeat/heartbeat.o \
 driver/gpio/gpio.o \
 main.o \
@@ -101,6 +103,7 @@ OBJS_AS_ARGS +=  \
 app/app.o \
 app/app_startup.o \
 app/bsp.o \
+component/doutput_module/doutput_module.o \
 component/heartbeat/heartbeat.o \
 driver/gpio/gpio.o \
 main.o \
@@ -112,6 +115,7 @@ C_DEPS +=  \
 app/app.d \
 app/app_startup.d \
 app/bsp.d \
+component/doutput_module/doutput_module.d \
 component/heartbeat/heartbeat.d \
 driver/gpio/gpio.d \
 main.d \
@@ -123,6 +127,7 @@ C_DEPS_AS_ARGS +=  \
 app/app.d \
 app/app_startup.d \
 app/bsp.d \
+component/doutput_module/doutput_module.d \
 component/heartbeat/heartbeat.d \
 driver/gpio/gpio.d \
 main.d \
@@ -165,6 +170,13 @@ app/bsp.o: app/bsp.c
 	@echo Finished building: $<
 	
 
+component/doutput_module/doutput_module.o: component/doutput_module/doutput_module.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
 component/heartbeat/heartbeat.o: component/heartbeat/heartbeat.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
@@ -179,7 +191,7 @@ driver/gpio/gpio.o: driver/gpio/gpio.c
 	@echo Finished building: $<
 	
 
-./main.o: main.c
+./main.o: ./main.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
@@ -228,7 +240,7 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) load git
+all: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) load
 
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
@@ -243,9 +255,9 @@ $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER
 	
 
 load:
-	avrdude -u -c usbasp -p m328p -P usb -B 0.5 -U flash:w:"D:\Engineering\ES\_current training\atmega328p fun\main.hex":a
+	avrdude -u -c usbasp -p m328p -P usb -B 0.5 -U flash:w:"D:\Engineering\ES\_current training\Drivers\project\GccApplication1\Debug\GccApplication1.hex":a
 
-git:
+git: clean
 	git add .
 	git commit -m "update"
 
@@ -254,4 +266,7 @@ clean:
 	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
 	-$(RM) $(C_DEPS_AS_ARGS)   
 	rm -rf "GccApplication1.elf" "GccApplication1.a" "GccApplication1.hex" "GccApplication1.lss" "GccApplication1.eep" "GccApplication1.map" "GccApplication1.srec" "GccApplication1.usersignatures"
-	
+	find . -type f -name "*.xml" -delete
+	find . -type f -name "*.o" -delete
+	find . -type f -name "*.d" -delete
+	find . -type f -name "*.cproj" -delete
