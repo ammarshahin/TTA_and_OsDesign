@@ -59,7 +59,7 @@ void doutput_module_test(void)
 
     static uint16_t internalTimer = 0;
     internalTimer++;
-    if (internalTimer < 1000)
+    if (internalTimer < 20)
     {
         return;
     }

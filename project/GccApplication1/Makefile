@@ -255,7 +255,7 @@ $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER
 	
 
 load:
-	avrdude -u -c usbasp -p m328p -P usb -B 0.5 -U flash:w:"D:\Engineering\ES\_current training\Drivers\project\GccApplication1\Debug\GccApplication1.hex":a
+	avrdude -u -c usbasp -p m328p -P usb -B 0.5 -U flash:w:"D:\Engineering\ES\_current training\Drivers\project\GccApplication1\GccApplication1.hex":a
 
 git: clean
 	git add .
