@@ -46,6 +46,7 @@ typedef struct
 
 void gpio_init(gpio_t *px_gpio);
 void gpio_pinIOState_set(gpio_port_t port, gpio_pin_t pin, gpio_ioState_t ioState);
+void gpio_pinInPullupState_set(gpio_port_t port, gpio_pin_t pin, bool_t pullupEnable);
 void gpio_pinState_set(gpio_port_t port, gpio_pin_t pin, gpio_state_t x_state);
 uint8_t gpio_pinState_get(gpio_port_t port, gpio_pin_t pin);
 

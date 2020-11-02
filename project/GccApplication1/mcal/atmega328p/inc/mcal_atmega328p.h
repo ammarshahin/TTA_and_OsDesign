@@ -7,6 +7,7 @@
 #include <stdint-gcc.h>
 #include "inttypes.h"
 #include "bsp.h"
+#include "def.h"
 #include "avr/io.h"
 #include "avr/interrupt.h"
 #include "util/delay.h"
@@ -79,6 +80,7 @@ void mcal_gpio_pin_init(mcal_gpio_t *px_gpio);
 void mcal_gpio_pinState_set(mcal_gpio_t *px_gpio, mcal_gpio_stateEnum_t u8_state);
 void mcal_gpio_portState_set(mcal_gpio_t *px_gpio, mcal_gpio_stateEnum_t x_state);
 void mcal_gpio_pinIOState_set(mcal_gpio_t *px_gpio, mcal_gpio_ioStateEnum_t x_ioState);
+void mcal_gpio_pinInPullupState(mcal_gpio_portEnum_t port, mcal_gpio_pinEnum_t pin, bool_t pullupEnable);
 void mcal_gpio_pinState_toggle(mcal_gpio_t *px_gpio);
 uint8_t mcal_gpio_pinState_get(mcal_gpio_t *px_gpio);
 uint8_t mcal_gpio_portState_get(mcal_gpio_t *px_gpio);

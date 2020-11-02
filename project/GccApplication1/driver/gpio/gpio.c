@@ -28,6 +28,11 @@ void gpio_pinIOState_set(gpio_port_t port, gpio_pin_t pin, gpio_ioState_t ioStat
     mcal_gpio_pinIOState_set(&x_mcalgpio, x_mcalgpio.ioState);
 }
 
+void gpio_pinInPullupState_set(gpio_port_t port, gpio_pin_t pin, bool_t pullupEnable)
+{
+    mcal_gpio_pinInPullupState((mcal_gpio_portEnum_t)port, (mcal_gpio_pinEnum_t)pin, pullupEnable);
+}
+
 void gpio_pinState_set(gpio_port_t port, gpio_pin_t pin, gpio_state_t x_state)
 {
     mcal_gpio_t x_mcalgpio;

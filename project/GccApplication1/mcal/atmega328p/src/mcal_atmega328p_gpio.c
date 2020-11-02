@@ -150,6 +150,38 @@ uint8_t mcal_gpio_portState_get(mcal_gpio_t *px_gpio)
     return (uint8_t)*u8_pinReg;
 }
 
+void mcal_gpio_pinInPullupState(mcal_gpio_portEnum_t port, mcal_gpio_pinEnum_t pin, bool_t pullupEnable)
+{
+    uint8_t volatile *u8_pinReg = NULL;
+
+    switch (port)
+    {
+    case MCAL_GPIO_PORTB:
+        u8_pinReg = &PINB;
+        break;
+
+    case MCAL_GPIO_PORTC:
+        u8_pinReg = &PINC;
+        break;
+
+    case MCAL_GPIO_PORTD:
+        u8_pinReg = &PIND;
+        break;
+
+    default:
+        break;
+    }
+
+    if (pullupEnable == true)
+    {
+        BIT_SET(*u8_pinReg, pin - 1);
+    }
+    else
+    {
+        BIT_CLR(*u8_pinReg, pin - 1);
+    }
+}
+
 void mcal_gpio_pinIOState_set(mcal_gpio_t *px_gpio, mcal_gpio_ioStateEnum_t x_ioState)
 {
     uint8_t volatile *u8_ddrReg = NULL;

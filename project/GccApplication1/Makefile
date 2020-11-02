@@ -251,7 +251,7 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) load
+all: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) load fastClean
 
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
@@ -277,5 +277,14 @@ clean:
 	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
 	-$(RM) $(C_DEPS_AS_ARGS)   
 	rm -rf "GccApplication1.elf" "GccApplication1.a" "GccApplication1.hex" "GccApplication1.lss" "GccApplication1.eep" "GccApplication1.map" "GccApplication1.srec" "GccApplication1.usersignatures"
+	find . -type f -name "*.o" -delete
+	find . -type f -name "*.d" -delete
+
+
+
+fastClean:
+	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
+	-$(RM) $(C_DEPS_AS_ARGS)   
+	rm -rf "GccApplication1.a" "GccApplication1.lss" "GccApplication1.eep" "GccApplication1.map" "GccApplication1.srec" "GccApplication1.usersignatures"
 	find . -type f -name "*.o" -delete
 	find . -type f -name "*.d" -delete

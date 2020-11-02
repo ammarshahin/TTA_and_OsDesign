@@ -14,9 +14,6 @@
 #define REG_SET(reg, value) ((reg) = (value))
 #define REG_GET(reg) (reg)
 
-#define WGET_BIT BIT_GET
-#define WSET_BIT BIT_SET
-#define WCLR_BIT BIT_CLR
 #define CONTROL_BIT(reg, index, command) ((command) == (0) ? (CLR_BIT(reg, index)) : (SET_BIT(reg, index)))
 #define WCONTROL_BIT(wreg, index, command) ((command) == (0) ? (WCLR_BIT(wreg, index)) : (WSET_BIT(wreg, index)))
 

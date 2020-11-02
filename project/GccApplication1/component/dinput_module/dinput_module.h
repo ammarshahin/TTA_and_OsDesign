@@ -11,8 +11,8 @@ typedef struct
     gpio_port_t port;
     gpio_pin_t pin;
     bool_t pullUpEn;
-    uint8_t dinputID;              // id given by the app to be used later to with the getters `unique for each sw`
-    uint32_t shortPressMultiplier; // multiplies of the period (so each sw can have different update interval)
+    uint8_t dinputID;                // id given by the app to be used later to with the getters `unique for each sw`
+    uint32_t shortPressMultiplier;   // multiplies of the period (so each sw can have different update interval)
     uint32_t longPressMultiplier;
 } dinputModule_t;
 
@@ -31,6 +31,5 @@ dinputModule_stateEnum_t dinputModule_edgeState_get(uint8_t u8_dinputID);
 dinputModule_stateEnum_t dinputModule_fastEdgeState_get(uint8_t u8_dinputID);
 void dinputModule_shortPressMultiplier_set(uint8_t u8_dinputID, uint32_t u32_newMultiplier);
 void dinputModule_longPressMultiplier_set(uint8_t u8_dinputID, uint32_t u32_newMultiplier);
-void dinputModule_callback_register(uint8_t u8_dinputID, void (*action)(void *), void *actionArg);
 
 #endif
