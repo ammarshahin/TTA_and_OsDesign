@@ -1,4 +1,5 @@
 .vscode
+Debug
 project/.vs
 *.atsln
 project/GccApplication1/Debug

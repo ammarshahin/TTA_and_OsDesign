@@ -32,8 +32,8 @@ int main(void)
     din.pin = SWITCH_PIN;
     din.pullUpEn = true;
     din.dinputID = SWITCH_INPUT;
-    din.shortPressMultiplier = 20;
-    din.longPressMultiplier = 10000;
+    din.shortPressMultiplier = 50;
+    din.longPressMultiplier = 1000;
     dinputModule_init(&din);
 
     // gpio_t x_heartbeat;
