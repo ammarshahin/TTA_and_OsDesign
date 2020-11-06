@@ -7,3 +7,9 @@ project/GccApplication1/Debug
 *.cproj
 *.hex
 *.elf
+*.eep
+*.lss
+*.map
+*.srec
+*.d
+*.o

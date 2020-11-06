@@ -91,15 +91,15 @@ int utils_strlen(uint8_t *s)
 
 int32_t utils_atoi(uint8_t *str)
 {
-    int32_t res = 0; // Initialize result
-    int8_t sign = 1; // Initialize sign as positive
-    uint8_t i = 0;   // Initialize index of first digit
+    int32_t res = 0;   // Initialize result
+    int8_t sign = 1;   // Initialize sign as positive
+    uint8_t i = 0;     // Initialize index of first digit
 
     // If number is negative, then update sign
     if (str[0] == '-')
     {
         sign = -1;
-        i++; // Also update index of first digit
+        i++;   // Also update index of first digit
     }
 
     // Iterate through all digits and update the result
@@ -143,7 +143,7 @@ void utils_itoahex(uint8_t x, char *a)
             break;
         }
     }
-    utils_reverse(a);
+    utils_reverse((uint8_t *)a);
 }
 
 uint8_t utils_dataMatch_check(uint8_t *data, uint8_t *ref, uint16_t size)

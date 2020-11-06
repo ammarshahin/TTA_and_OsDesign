@@ -40,14 +40,16 @@ result_t doutputModule_state_set(uint8_t u8_doutputID, gpio_state_t x_state)
 gpio_state_t doutputModule_state_get(uint8_t u8_doutputID)
 {
     uint8_t i = 0;
+    gpio_state_t ret = 0;
 
     for (i = 0; i < gu8_doutputModule_internalCounter; i++)
     {
         if (gax_doutputModule_internalHandler[i].outputID == u8_doutputID)
         {
-            return gax_doutputModule_internalHandler[i].gpio.state;
+            ret = gax_doutputModule_internalHandler[i].gpio.state;
         }
     }
+    return ret;
 }
 
 void doutputModule_update(void *arg)

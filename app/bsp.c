@@ -125,7 +125,7 @@ void SysTick_Handler(void)
 
 void bsp_clockConfig_set(void)
 {
-    mcal_cg_system_set();
+    //mcal_cg_system_set();
 }
 
 void bsp_interruptPriorities_set(void)
