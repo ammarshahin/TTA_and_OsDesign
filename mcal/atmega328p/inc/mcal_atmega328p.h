@@ -145,40 +145,124 @@ void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 
 /********************************************************************************/
 // timer
-// TODO: redo these values
-typedef uint8_t mcal_timer_t;
-#define MCAL_TIMER_0 (0U)
-#define MCAL_TIMER_1 (1U)
-#define MCAL_TIMER_2 (2U)
+/* Registers mapping */
 
-typedef uint32_t mcal_timer_timerState_t;
-#define MCAL_TIMER_START (1U)
-#define MCAL_TIMER_STOP (0U)
+#define TIMSK0 *((reg_type)0x6E)
+#define TIMSK1 *((reg_type)0x6F)
+#define TIMSK2 *((reg_type)0x70)
 
-typedef uint8_t mcal_timer_eventEdgeConfig_t;
-#define MCAL_TIMER_EDGE_RISING (1U)
-#define MCAL_TIMER_EDGE_FALLING (0U)
+#define TIFR0 *((reg_type)0x35)
+#define TIFR1 *((reg_type)0x36)
+#define TIFR2 *((reg_type)0x37)
+
+#define TWCR *((reg_type)0xbc)
+
+/* Timer 0 */
+#define TCCR0A *((reg_type)0x44)
+#define TCCR0B *((reg_type)0x45)
+#define TCNT0 *((reg_type)0x46)
+#define OCR0A *((reg_type)0x47)
+#define OCR0B *((reg_type)0x48)
+
+/* Timer 2 */
+#define TCCR2A *((reg_type)0xB0)
+#define TCCR2B *((reg_type)0xB1)
+#define TCNT2 *((reg_type)0xB2)
+#define OCR2A *((reg_type)0xB3)
+#define OCR2B *((reg_type)0xB4)
+
+/* Timer 1 */
+#define TCCR1A *((reg_type)0x80)
+#define TCCR1B *((reg_type)0x81)
+#define TCCR1C *((reg_type)0x82)
+#define TCNT1L *((reg_type)0x84)
+#define TCNT1H *((reg_type)0x85)
+#define ICR1L *((reg_type)0x86)
+#define ICR1H *((reg_type)0x87)
+#define OCR1AL *((reg_type)0x88)
+#define OCR1AH *((reg_type)0x89)
+#define OCR1BL *((reg_type)0x8A)
+#define OCR1BH *((reg_type)0x8B)
 
 typedef enum
 {
-    MCAL_TIMER_INT_ENABLE = 1,
-    MCAL_TIMER_INT_DISABLE = 0
+    MCAL_TIMER_0 = (0U),
+    MCAL_TIMER_1 = (1U),
+    MCAL_TIMER_2 = (2U),
+} mcal_timer_t;
+
+typedef enum
+{
+    MCAL_TIMER_TIMER_MODE = (0U),
+    MCAL_TIMER_COUNTER_MODE = (1U),
+} mcal_timer_mode_t;
+
+typedef enum
+{
+    MCAL_TIMER_STOP = (0U),
+    MCAL_TIMER_START = (1U),
+} mcal_timer_timerState_t;
+
+typedef enum
+{
+    MCAL_TIMER_EDGE_RISING = (1U),
+    MCAL_TIMER_EDGE_FALLING = (0U),
+} mcal_timer_eventEdgeConfig_t;
+
+typedef enum
+{
+    MCAL_TIMER_INT_DISABLE = (0x00u),
+    MCAL_TIMER_INT_OVERFLOW = (0x01u),
+    MCAL_TIMER_INT_COMPARE_MATCH_A = (0x02u),
+    MCAL_TIMER_INT_COMPARE_MATCH_B = (0x04u),
 } mcal_timer_intModeEnum_t;
 
-void mcal_timer_init(void);
-void mcal_timer_timerModeMS_init(mcal_timer_t *px_tb, uint32_t u32_timeMS);
-void mcal_timer_timerModeUS_init(mcal_timer_t *px_tb, uint32_t u32_timeUS);
-void mcal_timer_eventMode_init(mcal_timer_t *px_tb, mcal_gpio_t *px_portConfig, mcal_timer_eventEdgeConfig_t x_edge);
-void mcal_timer_timerInterruptState_set(mcal_timer_t *px_tb, mcal_timer_intModeEnum_t x_intState);
-void mcal_timer_timerChannel_enable(mcal_timer_t *px_tb);
-void mcal_timer_timerChannel_disable(mcal_timer_t *px_tb);
-void mcal_timer_timerState_set(mcal_timer_t *px_tb, mcal_timer_timerState_t x_state);
-void mcal_timer_timerFlag_clear(mcal_timer_t *px_tb);
-uint32_t mcal_timer_timerFlag_get(mcal_timer_t *px_tb);
-void mcal_timer_timerCounter_reset(mcal_timer_t *px_tb);
-uint32_t mcal_timer_timerCounter_get(mcal_timer_t *px_tb);
-void mcal_timer_softWareCap(mcal_timer_t *px_tb);
+typedef uint8_t mcal_timer_intMode_t;
 
+typedef enum
+{
+    MCAL_TIMER_INT_NO_FLAG = (0x00u),
+    MCAL_TIMER_INT_OVERFLOW_FLAG = (0x01u),
+    MCAL_TIMER_INT_COMPARE_MATCH_A_FLAG = (0x02u),
+    MCAL_TIMER_INT_COMPARE_MATCH_B_FLAG = (0x04u),
+} mcal_timer_intFlagEnum_t;
+
+typedef enum
+{
+    NO_CLOCK = (0u),
+    NO_PRESCALLER = (1u),
+    PRESCALLER_8 = (2u),
+    PRESCALLER_64 = (3u),
+    PRESCALLER_256 = (4u),
+    PRESCALLER_1024 = (5u),
+    PRESCALLER_EXTERNAL_CLOCK_FALLING = (6u),
+    PRESCALLER_EXTERNAL_CLOCK_RISING = (7u),
+} mcal_timer_prescaller_t;
+
+typedef struct
+{
+    mcal_timer_t channel_num;
+    mcal_timer_prescaller_t timer_prescaller;
+    mcal_timer_timerState_t timerState;
+    mcal_timer_intMode_t timer_intMode;
+} mcal_timer_CFG_t;
+
+void mcal_timer_init(mcal_timer_CFG_t *px_timerCFG);
+void mcal_timer_timerInterruptState_set(mcal_timer_t px_tb, mcal_timer_intMode_t x_intState);
+void mcal_timer_timerChannel_enable(mcal_timer_t px_tb);
+void mcal_timer_timerChannel_disable(mcal_timer_t px_tb);
+void mcal_timer_timerCounter_reset(mcal_timer_t px_tb);
+uint16_t mcal_timer_timerCounter_get(mcal_timer_t px_tb);
+void mcal_timer_timerFlag_clear(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_flag);
+uint8_t mcal_timer_timerFlag_get(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_flag);
+
+
+/* stopped here */
+/*
+void mcal_timer_timerModeMS_init(mcal_timer_t *px_tb, uint32_t u32_timeMS);
+void mcal_timer_eventMode_init(mcal_timer_t *px_tb, mcal_gpio_t *px_portConfig, mcal_timer_eventEdgeConfig_t x_edge);
+void mcal_timer_softWareCap(mcal_timer_t *px_tb);
+*/
 /********************************************************************************/
 // pwm
 // TODO: redo these values
