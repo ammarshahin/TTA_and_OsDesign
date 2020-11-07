@@ -9,11 +9,13 @@
 #include "bsp.h"
 #include "def.h"
 #include "avr/io.h"
-#include "avr/interrupt.h"
+//#include "avr/interrupt.h"
 #include "util/delay.h"
-#include "util/twi.h"
-#include "avr/wdt.h"
-#include "avr/common.h"
+//#include "util/twi.h"
+//#include "avr/wdt.h"
+//#include "avr/common.h"
+
+typedef volatile uint8_t *const reg_type;
 
 /******************************************************************************/
 // gpio
@@ -146,7 +148,7 @@ void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 /********************************************************************************/
 // timer
 /* Registers mapping */
-
+/*
 #define TIMSK0 *((reg_type)0x6E)
 #define TIMSK1 *((reg_type)0x6F)
 #define TIMSK2 *((reg_type)0x70)
@@ -157,21 +159,21 @@ void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 
 #define TWCR *((reg_type)0xbc)
 
-/* Timer 0 */
+// Timer 0
 #define TCCR0A *((reg_type)0x44)
 #define TCCR0B *((reg_type)0x45)
 #define TCNT0 *((reg_type)0x46)
 #define OCR0A *((reg_type)0x47)
 #define OCR0B *((reg_type)0x48)
 
-/* Timer 2 */
+// Timer 2
 #define TCCR2A *((reg_type)0xB0)
 #define TCCR2B *((reg_type)0xB1)
 #define TCNT2 *((reg_type)0xB2)
 #define OCR2A *((reg_type)0xB3)
 #define OCR2B *((reg_type)0xB4)
 
-/* Timer 1 */
+// Timer 1
 #define TCCR1A *((reg_type)0x80)
 #define TCCR1B *((reg_type)0x81)
 #define TCCR1C *((reg_type)0x82)
@@ -183,14 +185,15 @@ void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 #define OCR1AH *((reg_type)0x89)
 #define OCR1BL *((reg_type)0x8A)
 #define OCR1BH *((reg_type)0x8B)
+*/
 
 #define TIFR_TOV_FLAG_MASK 0x01
 #define TIFR_OCRA_FLAG_MASK 0x02
 #define TIFR_OCRB_FLAG_MASK 0x04
 
-#define TIMER0_MAX_COUNT 256
+#define TIMER0_MAX_COUNT 255
 #define TIMER1_MAX_COUNT 65536
-#define TIMER2_MAX_COUNT 256
+#define TIMER2_MAX_COUNT 255
 
 typedef enum
 {
@@ -237,14 +240,14 @@ typedef enum
 
 typedef enum
 {
-    NO_CLOCK = (0u),
-    NO_PRESCALLER = (1u),
-    PRESCALLER_8 = (2u),
-    PRESCALLER_64 = (3u),
-    PRESCALLER_256 = (4u),
-    PRESCALLER_1024 = (5u),
-    PRESCALLER_EXTERNAL_CLOCK_FALLING = (6u),
-    PRESCALLER_EXTERNAL_CLOCK_RISING = (7u),
+    NO_CLOCK = (0x00),
+    NO_PRESCALLER = (0x01),
+    PRESCALLER_8 = (0x02),
+    PRESCALLER_64 = (0x03),
+    PRESCALLER_256 = (0x04),
+    PRESCALLER_1024 = (0x05),
+    PRESCALLER_EXTERNAL_CLOCK_FALLING = (0x06),
+    PRESCALLER_EXTERNAL_CLOCK_RISING = (0x07),
 } mcal_timer_prescaller_t;
 
 typedef struct
@@ -264,7 +267,7 @@ uint16_t mcal_timer_timerCounter_get(mcal_timer_t px_tb);
 void mcal_timer_timerFlag_clear(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_flag);
 uint8_t mcal_timer_timerFlag_get(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_flag);
 void mcal_timer_delay_ms(mcal_timer_t x_timerCh, uint16_t delay);
-void mcal_timer_delay_ns(mcal_timer_t x_timerCh, uint16_t delay);
+void mcal_timer_delay_us(mcal_timer_t x_timerCh, uint16_t delay);
 /* stopped here */
 /*
 void mcal_timer_timerModeMS_init(mcal_timer_t *px_tb, uint32_t u32_timeMS);

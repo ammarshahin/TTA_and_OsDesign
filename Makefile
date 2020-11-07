@@ -263,7 +263,9 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) load fastClean
+all: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) fastClean load
+
+build: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) fastClean
 
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@

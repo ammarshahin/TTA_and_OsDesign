@@ -82,7 +82,8 @@ void doutput_module_test(void)
 {
     static uint8_t state = MCAL_GPIO_HIGH;
 
-    mcal_timer_delay_ms(MCAL_TIMER_0, 500);
+    mcal_timer_delay_ms(MCAL_TIMER_0, 1000);
+    //_delay_ms(1000);
 
     if (state == MCAL_GPIO_HIGH)
     {

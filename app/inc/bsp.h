@@ -1,7 +1,7 @@
 #ifndef BSP_H
 #define BSP_H
 
-#define F_CPU 1000000UL
+#define F_CPU 8000000UL
 
 #define PLL_FACTOR (8)
 
