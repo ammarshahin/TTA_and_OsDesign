@@ -184,6 +184,14 @@ void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 #define OCR1BL *((reg_type)0x8A)
 #define OCR1BH *((reg_type)0x8B)
 
+#define TIFR_TOV_FLAG_MASK 0x01
+#define TIFR_OCRA_FLAG_MASK 0x02
+#define TIFR_OCRB_FLAG_MASK 0x04
+
+#define TIMER0_MAX_COUNT 256
+#define TIMER1_MAX_COUNT 65536
+#define TIMER2_MAX_COUNT 256
+
 typedef enum
 {
     MCAL_TIMER_0 = (0U),
@@ -255,8 +263,8 @@ void mcal_timer_timerCounter_reset(mcal_timer_t px_tb);
 uint16_t mcal_timer_timerCounter_get(mcal_timer_t px_tb);
 void mcal_timer_timerFlag_clear(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_flag);
 uint8_t mcal_timer_timerFlag_get(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_flag);
-
-
+void mcal_timer_delay_ms(mcal_timer_t x_timerCh, uint16_t delay);
+void mcal_timer_delay_ns(mcal_timer_t x_timerCh, uint16_t delay);
 /* stopped here */
 /*
 void mcal_timer_timerModeMS_init(mcal_timer_t *px_tb, uint32_t u32_timeMS);

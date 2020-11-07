@@ -10,9 +10,17 @@
  */
 #include "mcal_atmega328p.h"
 
-static mcal_timer_prescaller_t gArr_timers_internalHandler[3u];
+typedef struct
+{
+    mcal_timer_prescaller_t mask;
+    uint16_t absolute_value;
+} timer_prescaller_t;
 
-// FIXME: add the function comments
+static timer_prescaller_t gArr_timers_internalHandler[3u];
+
+static void mcal_timer_perscaller_buffer(mcal_timer_t x_timer, mcal_timer_prescaller_t prescaller);
+
+// FIXME: add the functions comments
 /**
  * @fuction: mcal_timer_init 
  * @brief 
@@ -27,7 +35,6 @@ void mcal_timer_init(mcal_timer_CFG_t *px_timerCFG)
     case MCAL_TIMER_0:
         TCCR0A = 0x00u;
         TIMSK0 = (0x00u | px_timerCFG->timer_intMode);
-        gArr_timers_internalHandler[MCAL_TIMER_0] = px_timerCFG->timer_prescaller;
         if (px_timerCFG->timerState == MCAL_TIMER_START)
         {
             TCCR0B = (0x00u | px_timerCFG->timer_prescaller);
@@ -42,7 +49,6 @@ void mcal_timer_init(mcal_timer_CFG_t *px_timerCFG)
     case MCAL_TIMER_1:
         TCCR0A = 0x00u;
         TIMSK0 = (0x00u | px_timerCFG->timer_intMode);
-        gArr_timers_internalHandler[MCAL_TIMER_0] = px_timerCFG->timer_prescaller;
         if (px_timerCFG->timerState == MCAL_TIMER_START)
         {
             TCCR0B = (0x00u | px_timerCFG->timer_prescaller);
@@ -57,7 +63,6 @@ void mcal_timer_init(mcal_timer_CFG_t *px_timerCFG)
     case MCAL_TIMER_2:
         TCCR2A = 0x00u;
         TIMSK2 = (0x00u | px_timerCFG->timer_intMode);
-        gArr_timers_internalHandler[MCAL_TIMER_2] = px_timerCFG->timer_prescaller;
         if (px_timerCFG->timerState == MCAL_TIMER_START)
         {
             TCCR2B = (0x00u | px_timerCFG->timer_prescaller);
@@ -67,6 +72,107 @@ void mcal_timer_init(mcal_timer_CFG_t *px_timerCFG)
             TCCR2B = 0x00u;
         }
 
+        break;
+
+    default:
+        break;
+    }
+
+    /* mapping the prescaller to an absolute value and buffer it */
+    mcal_timer_perscaller_buffer(*px_timerCFG->channel_num, px_timerCFG->timer_prescaller);
+}
+
+static void mcal_timer_perscaller_buffer(mcal_timer_t x_timer, mcal_timer_prescaller_t prescaller)
+{
+    gArr_timers_internalHandler[x_timer].mask = px_timerCFG->timer_prescaller;
+
+    switch (x_timer)
+    {
+    case MCAL_TIMER_0:
+        switch (px_timerCFG->timer_prescaller)
+        {
+        case NO_CLOCK:
+            gArr_timers_internalHandler[x_timer].absolute_value = 0;
+            break;
+        case NO_PRESCALLER:
+            gArr_timers_internalHandler[x_timer].absolute_value = 1;
+            break;
+        case PRESCALLER_8:
+            gArr_timers_internalHandler[x_timer].absolute_value = 8;
+            break;
+        case PRESCALLER_64:
+            gArr_timers_internalHandler[x_timer].absolute_value = 64;
+            break;
+        case PRESCALLER_256:
+            gArr_timers_internalHandler[x_timer].absolute_value = 256;
+            break;
+        case PRESCALLER_1024:
+            gArr_timers_internalHandler[x_timer].absolute_value = 1024;
+            break;
+
+        default:
+            break;
+        }
+
+        break;
+
+    case MCAL_TIMER_1:
+        switch (px_timerCFG->timer_prescaller)
+        {
+        case NO_CLOCK:
+            gArr_timers_internalHandler[x_timer].absolute_value = 0;
+            break;
+        case NO_PRESCALLER:
+            gArr_timers_internalHandler[x_timer].absolute_value = 1;
+            break;
+        case PRESCALLER_8:
+            gArr_timers_internalHandler[x_timer].absolute_value = 8;
+            break;
+        case PRESCALLER_64:
+            gArr_timers_internalHandler[x_timer].absolute_value = 64;
+            break;
+        case PRESCALLER_256:
+            gArr_timers_internalHandler[x_timer].absolute_value = 256;
+            break;
+        case PRESCALLER_1024:
+            gArr_timers_internalHandler[x_timer].absolute_value = 1024;
+            break;
+        default:
+            break;
+        }
+        break;
+
+    case MCAL_TIMER_2:
+        switch (px_timerCFG->timer_prescaller)
+        {
+        case NO_CLOCK:
+            gArr_timers_internalHandler[x_timer].absolute_value = 0;
+            break;
+        case NO_PRESCALLER:
+            gArr_timers_internalHandler[x_timer].absolute_value = 1;
+            break;
+        case PRESCALLER_8:
+            gArr_timers_internalHandler[x_timer].absolute_value = 8;
+            break;
+        case PRESCALLER_64:
+            gArr_timers_internalHandler[x_timer].absolute_value = 32;
+            break;
+        case PRESCALLER_256:
+            gArr_timers_internalHandler[x_timer].absolute_value = 64;
+            break;
+        case PRESCALLER_1024:
+            gArr_timers_internalHandler[x_timer].absolute_value = 128;
+            break;
+        case PRESCALLER_EXTERNAL_CLOCK_FALLING:
+            gArr_timers_internalHandler[x_timer].absolute_value = 256;
+            break;
+        case PRESCALLER_EXTERNAL_CLOCK_RISING:
+            gArr_timers_internalHandler[x_timer].absolute_value = 1024;
+            break;
+
+        default:
+            break;
+        }
         break;
 
     default:
@@ -205,4 +311,94 @@ uint8_t mcal_timer_timerFlag_get(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_
     return ret;
 }
 
+/**
+ * @function: Timers_timer0_Delay_ms
+ * @description: Delay function pooling based to block the code for a specific amount of time
+ * @param x_timerCh the timer channel used
+ * @param delay the time I want to delay in ms
+ */
+void mcal_timer_Delay_ms(mcal_timer_t x_timerCh, uint16_t delay)
+{
+    volatile uint64_t counter = 0;
+    volatile uint8_t *timer_flag_reg = NULL;
 
+    switch (x_timerCh)
+    {
+    case MCAL_TIMER_0:
+        counter = ((uint64_t)delay) * F_CPU / (TIMER0_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000);
+        TCNT0 = 0u;
+        timer_flag_reg = TIFR0;
+        break;
+
+    case MCAL_TIMER_1:
+        counter = ((uint64_t)delay) * F_CPU / (TIMER1_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000);
+        TCNT1L = 0u;
+        TCNT1H = 0u;
+        timer_flag_reg = TIFR1;
+        break;
+
+    case MCAL_TIMER_2:
+        counter = ((uint64_t)delay) * F_CPU / (TIMER2_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000);
+        TCNT2 = 0u;
+        timer_flag_reg = TIFR2;
+        break;
+
+    default:
+        break;
+    }
+
+    mcal_timer_timerChannel_enable(x_timerCh);
+    while (counter--)
+    {
+        while ((*timer_flag_reg & TIFR_TOV_FLAG_MASK) == FALSE)
+            ;
+        *timer_flag_reg |= TIFR_TOV_FLAG_MASK;
+    }
+    mcal_timer_timerChannel_disble(x_timerCh);
+}
+
+/**
+ * @function: Timers_timer0_Delay_ms
+ * @description: Delay function pooling based to block the code for a specific amount of time
+ * @param x_timerCh the timer channel used
+ * @param delay the time I want to delay in ns
+ */
+void mcal_timer_delay_ns(mcal_timer_t x_timerCh, uint16_t delay)
+{
+    volatile uint64_t counter = 0;
+    volatile uint8_t *timer_flag_reg = NULL;
+
+    switch (x_timerCh)
+    {
+    case MCAL_TIMER_0:
+        counter = ((uint64_t)delay) * F_CPU / (TIMER0_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000);
+        TCNT0 = 0u;
+        timer_flag_reg = TIFR0;
+        break;
+
+    case MCAL_TIMER_1:
+        counter = ((uint64_t)delay) * F_CPU / (TIMER1_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000);
+        TCNT1L = 0u;
+        TCNT1H = 0u;
+        timer_flag_reg = TIFR1;
+        break;
+
+    case MCAL_TIMER_2:
+        counter = ((uint64_t)delay) * F_CPU / (TIMER2_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000);
+        TCNT2 = 0u;
+        timer_flag_reg = TIFR2;
+        break;
+
+    default:
+        break;
+    }
+
+    mcal_timer_timerChannel_enable(x_timerCh);
+    while (counter--)
+    {
+        while ((*timer_flag_reg & TIFR_TOV_FLAG_MASK) == FALSE)
+            ;
+        *timer_flag_reg |= TIFR_TOV_FLAG_MASK;
+    }
+    mcal_timer_timerChannel_disble(x_timerCh);
+}

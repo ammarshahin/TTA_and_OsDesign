@@ -36,6 +36,13 @@ int main(void)
     din.longPressMultiplier = 1000;
     dinputModule_init(&din);
 
+    mcal_timer_CFG_t x_timer;
+    x_timer.channel_num = MCAL_TIMER_0;
+    x_timer.timer_intMode = MCAL_TIMER_INT_DISABLE;
+    x_timer.timer_prescaller = NO_PRESCALLER;
+    x_timer.timerState = MCAL_TIMER_STOP;
+    mcal_timer_init(&x_timer);
+
     // gpio_t x_heartbeat;
     // x_heartbeat.port = HEARTBEAT_LED_PORT;
     // x_heartbeat.pin = HEARTBEAT_LED_PIN;
@@ -73,15 +80,9 @@ int main(void)
 
 void doutput_module_test(void)
 {
-    doutputModule_state_set(SWITCH_OUTPUT, (gpio_state_t)dinputModule_state_get(SWITCH_INPUT));
     static uint8_t state = MCAL_GPIO_HIGH;
-    static uint16_t internalTimer = 0;
-    internalTimer++;
-    if (internalTimer < 500)
-    {
-        return;
-    }
-    internalTimer = 0;
+
+    mcal_timer_delay_ms(MCAL_TIMER_0, 500);
 
     if (state == MCAL_GPIO_HIGH)
     {
@@ -91,5 +92,7 @@ void doutput_module_test(void)
     {
         state = MCAL_GPIO_HIGH;
     }
+
     doutputModule_state_set(HEARTBIT_OUTPUT, state);
+    doutputModule_state_set(SWITCH_OUTPUT, (gpio_state_t)dinputModule_state_get(SWITCH_INPUT));
 }
