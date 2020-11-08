@@ -91,57 +91,161 @@ void mcal_gpio_altFunction_set(mcal_gpio_t *px_gpio, mcal_gpio_alternateFnEnum_t
 /********************************************************************************/
 // uart
 
-typedef uint8_t mcal_uart_t;
-#define MCAL_UART_UART0 (0)
-#define MCAL_UART_UART1 (1)
-#define MCAL_UART_UART2 (2)
-#define MCAL_UART_UART3 (3)
+/* CORE */
+#define UART_DATA_REG (UDR0)
+#define UART_CONTROL_STATUS_A_REG (UCSR0A)
+#define UART_CONTROL_STATUS_B_REG (UCSR0B)
+#define UART_CONTROL_STATUS_C_REG (UCSR0C)
+#define UART_BAUD_RATE_LOW_REG (UBRR0L)
+#define UART_BAUD_RATE_HIGH_REG (UBRR0H)
 
-//TODO: reinit these values from the datasheet
-typedef uint32_t mcal_uartDataBitsEnum_t;
-#define MCAL_UART_DATA_BITS_7 (UART_DATA_BITS_7)
-#define MCAL_UART_DATA_BITS_8 (UART_DATA_BITS_8)
-#define MCAL_UART_DATA_BITS_9 (UART_DATA_BITS_9)
+#define UART_RECV_COMPLETE_FLAG_CHECK() (BIT_GET(UART_CONTROL_STATUS_A_REG, 7))
+#define UART_TRANSMIT_COMPLETE_FLAG_CHECK() (BIT_GET(UART_CONTROL_STATUS_A_REG, 6))
+#define UART_TRANSMIT_COMPLETE_FLAG_CLEAR() (BIT_SET(UART_CONTROL_STATUS_A_REG, 6))
+#define UART_TRANSMIT_REG_READY_CHECK() (BIT_GET(UART_CONTROL_STATUS_A_REG, 5))
 
-typedef uint32_t mcal_uartStopBitsEnum_t;
-#define MCAL_UART_STOP_BITS_1 (UART_STOP_BITS_1)
-#define MCAL_UART_STOP_BITS_2 (UART_STOP_BITS_2)
+#define UART_DOUBLE_SPEED_ENABLE() (BIT_SET(UART_CONTROL_STATUS_A_REG, 1))
+#define UART_DOUBLE_SPEED_DISABLE() (BIT_CLR(UART_CONTROL_STATUS_A_REG, 1))
 
-typedef uint32_t mcal_uartParityEnum_t;
-#define MCAL_UART_PARITY_NO (UART_NO_PARITY)
-#define MCAL_UART_PARITY_EVEN (UART_EVEN_PARITY)
-#define MCAL_UART_PARITY_ODD (UART_ODD_PARITY)
+// TODO: change the wait condition here to something that doesn't halt the cpu
+#define UART_DATA_SET(data)                          \
+    do                                               \
+    {                                                \
+        while (UART_TRANSMIT_REG_READY_CHECK() == 0) \
+            ;                                        \
+        UART_DATA_REG = (data);                      \
+    } while (0)
 
-typedef uint32_t mcal_uartModeEnum_t;
-#define MCAL_UART_MODE_RX (UART_ENABLE_RX)
-#define MCAL_UART_MODE_TX (UART_ENABLE_TX)
-#define MCAL_UART_MODE_TXRX (MCAL_UART_MODE_RX | MCAL_UART_MODE_TX)
+#define UART_DATA_GET(data)     \
+    do                          \
+    {                           \
+        (data) = UART_DATA_REG; \
+    } while (0)
 
-typedef uint32_t mcal_uartFlowControlEnum_t;
-#define MCAL_UART_FLOW_CTRL_NONE (UART_NONE_FLOW_CTRL)
+#define UART_RECV_COMPLETE_INT_ENABLE() (BIT_SET(UART_CONTROL_STATUS_B_REG, 7))
+#define UART_RECV_COMPLETE_INT_DISABLE() (BIT_CLR(UART_CONTROL_STATUS_B_REG, 7))
+#define UART_TRANSMIT_COMPLETE_INT_ENABLE() (BIT_SET(UART_CONTROL_STATUS_B_REG, 6))
+#define UART_TRANSMIT_COMPLETE_INT_DISABLE() (BIT_CLR(UART_CONTROL_STATUS_B_REG, 6))
+#define UART_TRANSMIT_REG_READY_INT_ENABLE() (BIT_SET(UART_CONTROL_STATUS_B_REG, 5))
+#define UART_TRANSMIT_REG_READY_INT_DISABLE() (BIT_CLR(UART_CONTROL_STATUS_B_REG, 5))
+#define UART_RECEIVER_ENABLE() (BIT_SET(UART_CONTROL_STATUS_B_REG, 4))
+#define UART_RECEIVER_DISABLE() (BIT_CLR(UART_CONTROL_STATUS_B_REG, 4))
+#define UART_TRANSMITTER_ENABLE() (BIT_SET(UART_CONTROL_STATUS_B_REG, 3))
+#define UART_TRANSMITTER_DISABLE() (BIT_SET(UART_CONTROL_STATUS_B_REG, 3))
 
-typedef uint32_t mcal_uartDirectionEnum_t;
-#define MCAL_UART_DIR_RX (UART_RX)
-#define MCAL_UART_DIR_TX (UART_TX)
+#define UART_CHAR_SIZE_7_BIT_SET()             \
+    do                                         \
+    {                                          \
+        BIT_CLR(UART_CONTROL_STATUS_C_REG, 1); \
+        BIT_SET(UART_CONTROL_STATUS_C_REG, 2); \
+        BIT_CLR(UART_CONTROL_STATUS_B_REG, 2); \
+    } while (0)
+
+#define UART_CHAR_SIZE_8_BIT_SET()             \
+    do                                         \
+    {                                          \
+        BIT_SET(UART_CONTROL_STATUS_C_REG, 1); \
+        BIT_SET(UART_CONTROL_STATUS_C_REG, 2); \
+        BIT_CLR(UART_CONTROL_STATUS_B_REG, 2); \
+    } while (0)
+
+#define UART_CHAR_SIZE_9_BIT_SET()             \
+    do                                         \
+    {                                          \
+        BIT_SET(UART_CONTROL_STATUS_C_REG, 1); \
+        BIT_SET(UART_CONTROL_STATUS_C_REG, 2); \
+        BIT_SET(UART_CONTROL_STATUS_B_REG, 2); \
+    } while (0)
+
+// baudValue = ((((F_CPU >> 4) + (baud >> 1)) / (baud)) - 1);
+#define UART_BAUD_RATE_SET(baud)                                                                 \
+    do                                                                                           \
+    {                                                                                            \
+        UART_BAUD_RATE_HIGH_REG = (uint8_t)(((((F_CPU >> 4) + (baud >> 1)) / (baud)) - 1) >> 8); \
+        UART_BAUD_RATE_LOW_REG = (uint8_t)((((F_CPU >> 4) + (baud >> 1)) / (baud)) - 1);         \
+    } while (0)
+
+#define UART_REG_INIT()                   \
+    do                                    \
+    {                                     \
+        UART_CONTROL_STATUS_A_REG = 0X00; \
+        UART_CONTROL_STATUS_B_REG = 0X00; \
+        UART_CONTROL_STATUS_C_REG = 0X00; \
+        UART_BAUD_RATE_HIGH_REG = 0X00;   \
+        UART_BAUD_RATE_LOW_REG = 0X00;    \
+    } while (0)
+
+#define uart_receive_int() ISR(USART_RXC_vect)
+
+/* MCAL */
+typedef enum
+{
+    MCAL_UART_UART0 = (0u)
+} mcal_uart_t;
+
+typedef enum
+{
+    MCAL_UART_INTERRUPT_NONE = 0X00,
+    MCAL_UART_INTERRUPT_RX = 0x80,
+    MCAL_UART_INTERRUPT_TX = 0x40,
+    MCAL_UART_INTERRUPT_UDRE = 0x20
+} mcal_uart_interruptEnum_t;
+
+typedef enum
+{
+    MCAL_UART_MODE_RX = 0x10,
+    MCAL_UART_MODE_TX = 0x08
+} mcal_uartModeEnum_t;
+
+typedef enum
+{
+    MCAL_UART_DATA_BITS_7 = (0u),
+    MCAL_UART_DATA_BITS_8 = (1u),
+    MCAL_UART_DATA_BITS_9 = (2u)
+} mcal_uartDataBitsEnum_t;
+
+typedef enum
+{
+    MCAL_UART_USART_DISABLE = 0x00,
+    MCAL_UART_USART_ENABLE = 0x40,
+    MCAL_UART_MASTER_SPI = 0xC0,
+} mcal_uart_usart_Enum_t;
+
+typedef enum
+{
+    MCAL_UART_STOP_BITS_1 = 0x00,
+    MCAL_UART_STOP_BITS_2 = 0x80,
+} mcal_uartStopBitsEnum_t;
+
+typedef enum
+{
+    MCAL_UART_PARITY_NO = 0x00,
+    MCAL_UART_PARITY_EVEN = 0x20,
+    MCAL_UART_PARITY_ODD = 0x10
+} mcal_uartParityEnum_t;
+
+// typedef uint32_t mcal_uartFlowControlEnum_t;
+// #define MCAL_UART_FLOW_CTRL_NONE (UART_NONE_FLOW_CTRL)
+
+// typedef uint32_t mcal_uartDirectionEnum_t;
+// #define MCAL_UART_DIR_RX (UART_RX)
+// #define MCAL_UART_DIR_TX (UART_TX)
 
 typedef struct
 {
     uint32_t baudRate;
+    mcal_uart_t uart_channel;
+    mcal_uartModeEnum_t mode;
+    mcal_uart_usart_Enum_t usartEN;
     mcal_uartDataBitsEnum_t dataBits;
     mcal_uartStopBitsEnum_t stopBits;
     mcal_uartParityEnum_t parity;
-    mcal_uartModeEnum_t mode;
-    mcal_uartFlowControlEnum_t flowControl;
-    uint8_t rxInterruptEN;
+    mcal_uart_interruptEnum_t interruptEN;
 } mcal_uartConfig_t;
 
-void mcal_uart_init(void);
-void mcal_uart_channel_set(mcal_uart_t x_uart, mcal_uartConfig_t *px_uartConfig);
+void mcal_uart_init(mcal_uartConfig_t *uartCFG);
 void mcal_uart_data_put(mcal_uart_t x_uart, uint8_t u8_data);
 uint8_t mcal_uart_data_get(mcal_uart_t x_uart);
-void mcal_uart_dma_init(void);
-uint32_t mcal_uart_dma_set(uint8_t *pu8_txBuffer, uint32_t u32_length, uint32_t u32_channel);
-uint32_t mcal_uart_dma_get(uint8_t *pu8_rxBuffer, uint32_t u32_length, uint32_t u32_channel);
 void mcal_uart_string_put(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 

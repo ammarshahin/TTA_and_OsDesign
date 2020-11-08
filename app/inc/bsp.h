@@ -1,11 +1,11 @@
 #ifndef BSP_H
 #define BSP_H
 
-#define F_CPU 8000000UL
+#define F_CPU 1000000UL
 
 #define PLL_FACTOR (8)
 
-#define ATMEGA328P 1525
+#define ATMEGA328P (1525u)
 
 // #define MCU (TMPM370)
 #define MCU (ATMEGA328P)

@@ -10,6 +10,7 @@
  */
 #include "mcal_atmega328p.h"
 #include "def.h"
+#include "utils.h"
 
 typedef struct
 {
@@ -110,7 +111,6 @@ static void mcal_timer_perscaller_buffer(mcal_timer_t x_timer, mcal_timer_presca
         case PRESCALLER_1024:
             gArr_timers_internalHandler[x_timer].absolute_value = 1024;
             break;
-
         default:
             break;
         }
@@ -320,26 +320,26 @@ uint8_t mcal_timer_timerFlag_get(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_
  */
 void mcal_timer_delay_ms(mcal_timer_t x_timerCh, uint16_t delay)
 {
-    volatile uint64_t counter = 0;
+    uint64_t counter = 0;
     volatile uint8_t *timer_flag_reg = NULL;
 
     switch (x_timerCh)
     {
     case MCAL_TIMER_0:
-        counter = ((uint64_t)delay * F_CPU) / ((uint64_t)TIMER0_MAX_COUNT * (uint64_t)gArr_timers_internalHandler[x_timerCh].absolute_value * (uint64_t)1000);
+        counter = (uint64_t)(((uint64_t)delay * F_CPU) / ((uint64_t)TIMER0_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000UL));
         TCNT0 = 0u;
         timer_flag_reg = &TIFR0;
         break;
 
     case MCAL_TIMER_1:
-        counter = ((uint64_t)delay) * F_CPU / (TIMER1_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000);
+        counter = (uint64_t)(((uint64_t)delay * F_CPU) / ((uint64_t)TIMER1_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000UL));
         TCNT1L = 0u;
         TCNT1H = 0u;
         timer_flag_reg = &TIFR1;
         break;
 
     case MCAL_TIMER_2:
-        counter = ((uint64_t)delay) * F_CPU / (TIMER2_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000);
+        counter = (uint64_t)(((uint64_t)delay * F_CPU) / ((uint64_t)TIMER2_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000UL));
         TCNT2 = 0u;
         timer_flag_reg = &TIFR2;
         break;
@@ -372,20 +372,20 @@ void mcal_timer_delay_us(mcal_timer_t x_timerCh, uint16_t delay)
     switch (x_timerCh)
     {
     case MCAL_TIMER_0:
-        counter = ((uint64_t)delay) * F_CPU / (TIMER0_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000);
+        counter = (uint64_t)((uint64_t)delay * F_CPU) / ((uint64_t)TIMER0_MAX_COUNT * (uint64_t)gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000UL);
         TCNT0 = 0u;
         timer_flag_reg = &(TIFR0);
         break;
 
     case MCAL_TIMER_1:
-        counter = ((uint64_t)delay) * F_CPU / (TIMER1_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000);
+        counter = (uint64_t)((uint64_t)delay * F_CPU) / ((uint64_t)TIMER1_MAX_COUNT * (uint64_t)gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000UL);
         TCNT1L = 0u;
         TCNT1H = 0u;
         timer_flag_reg = &(TIFR1);
         break;
 
     case MCAL_TIMER_2:
-        counter = ((uint64_t)delay) * F_CPU / (TIMER2_MAX_COUNT * gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000);
+        counter = (uint64_t)((uint64_t)delay * F_CPU) / ((uint64_t)TIMER2_MAX_COUNT * (uint64_t)gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000UL);
         TCNT2 = 0u;
         timer_flag_reg = &(TIFR2);
         break;

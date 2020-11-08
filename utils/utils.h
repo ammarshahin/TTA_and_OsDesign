@@ -40,6 +40,9 @@
 #define SWAP(x, y) ((x) ^= (y) ^= (x) ^= (y))
 #define ABS(x) (((x) < 0) ? -(x) : (x))
 
+#define FALSE (0U)
+#define TRUE (1U)
+
 #define UPDATE_COUNTER_CHECK(counter, interval) \
     do                                          \
     {                                           \
@@ -65,5 +68,18 @@ void utils_arrayToFloat(uint8_t *array, float *bytes);
 uint8_t utils_convergance_check(int32_t value1, int32_t value2, int32_t error);
 uint8_t utils_convergenceValidity_check(uint32_t value, uint32_t threshold, uint32_t range);
 uint8_t utils_thresholdValidity_check(uint32_t value, uint32_t highThreshold, uint32_t lowThreshold);
+
+/*===========================SW_Delay Functions===============================*/
+/**
+ * Description: Function to make a software Delay in the Melli seconds 
+ * @param n_ms the number of ms to delay
+ */
+void SwDelay_ms(uint32_t NoOfMilleSeconds);
+
+/**
+ * Description: Function to make a software Delay in the Micro Seconds. 
+ * @param NoOfMicroeSeconds the number of Microe Seconds to delay
+ */
+void SwDelay_us(uint32_t NoOfMicroeSeconds);
 
 #endif

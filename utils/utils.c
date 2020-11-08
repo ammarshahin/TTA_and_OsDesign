@@ -1,5 +1,13 @@
 #include "utils.h"
 
+#define CYCLE_MELLI_DELAY_FACTOR 9
+#define CYCLE_MICRO_DELAY_FACTOR 13
+
+#define SECONDS_TO_NANOSECONSD_FACTOR 1000000000
+#define SECONDS_TO_MICROSECONSD_FACTOR 1000000
+#define SECONDS_TO_MILLISECONSD_FACTOR 1000
+#define DUTY_CYCLE_PERCENTAGE_FACTOR 100
+
 #if 0
 void utils_ftoa(float x, uint8_t *a)
 {
@@ -227,4 +235,33 @@ uint8_t utils_thresholdValidity_check(uint32_t value, uint32_t highThreshold, ui
     }
     else
         return 0;
+}
+
+/*===========================SW_Delay Functions===============================*/
+/**
+ * Description: Function to make a software Delay in the Melli seconds 
+ * @param NoOfMilleSeconds the number of  Melli seconds to delay
+ */
+void SwDelay_ms(uint32_t NoOfMilleSeconds)
+{
+    uint64_t counter;
+    counter = NoOfMilleSeconds * (F_CPU / SECONDS_TO_MILLISECONSD_FACTOR);
+    while (counter > FALSE)
+    {
+        counter = counter - CYCLE_MELLI_DELAY_FACTOR;
+    }
+}
+
+/**
+ * Description: Function to make a software Delay in the Micro Seconds. 
+ * @param NoOfMicroeSeconds the number of Micro Seconds to delay
+ */
+void SwDelay_us(uint32_t NoOfMicroeSeconds)
+{
+    uint64_t counter;
+    counter = NoOfMicroeSeconds * (F_CPU / SECONDS_TO_MICROSECONSD_FACTOR);
+    while (counter > FALSE)
+    {
+        counter = counter - CYCLE_MICRO_DELAY_FACTOR;
+    }
 }
