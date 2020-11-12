@@ -26,9 +26,6 @@ void mcal_uart_init(mcal_uartConfig_t *uartCFG)
 
     /* baudrate */
     UART_BAUD_RATE_SET(uartCFG->baudRate);
-    // uint16_t BaudRate = (F_CPU / (16 * uartCFG->baudRate)) - 1;
-    // UART_BAUD_RATE_LOW_REG = (uint8_t)BaudRate;
-    // UART_BAUD_RATE_HIGH_REG = (uint8_t)(BaudRate >> 8);
 
     /* uart mode */
     UART_CONTROL_STATUS_B_REG |= uartCFG->mode;

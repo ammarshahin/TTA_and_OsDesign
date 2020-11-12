@@ -8,8 +8,8 @@ void mcal_gpio_init(void)
 
 void mcal_gpio_pin_init(mcal_gpio_t *px_gpio)
 {
-    uint8_t volatile *u8_ddrReg = NULL;
-    uint8_t volatile *u8_portReg = NULL;
+    volatile uint8_t *u8_ddrReg;
+    volatile uint8_t *u8_portReg;
 
     switch (px_gpio->port)
     {
@@ -35,11 +35,11 @@ void mcal_gpio_pin_init(mcal_gpio_t *px_gpio)
     switch (px_gpio->ioState)
     {
     case MCAL_GPIO_INPUT:
-        BIT_CLR(*u8_ddrReg, px_gpio->pin - 1);
+        BIT_CLR(*u8_ddrReg, px_gpio->pin);
         break;
 
     case MCAL_GPIO_OUTPUT:
-        BIT_SET(*u8_ddrReg, px_gpio->pin - 1);
+        BIT_SET(*u8_ddrReg, px_gpio->pin);
         break;
 
     default:
@@ -47,7 +47,7 @@ void mcal_gpio_pin_init(mcal_gpio_t *px_gpio)
         break;
     }
 
-    BIT_CTRL(*u8_portReg, px_gpio->pin - 1, px_gpio->pinState);
+    BIT_CTRL(*u8_portReg, px_gpio->pin, px_gpio->pinState);
 }
 
 // output
@@ -72,7 +72,7 @@ void mcal_gpio_pinState_set(mcal_gpio_t *px_gpio, mcal_gpio_stateEnum_t x_state)
         break;
     }
 
-    BIT_CTRL(*u8_portReg, px_gpio->pin - 1, x_state);
+    BIT_CTRL(*u8_portReg, px_gpio->pin, x_state);
 }
 
 // output
@@ -122,7 +122,7 @@ uint8_t mcal_gpio_pinState_get(mcal_gpio_t *px_gpio)
         break;
     }
 
-    return BIT_GET(*u8_pinReg, px_gpio->pin - 1);
+    return BIT_GET(*u8_pinReg, px_gpio->pin);
 }
 
 // input
@@ -174,11 +174,11 @@ void mcal_gpio_pinInPullupState(mcal_gpio_portEnum_t port, mcal_gpio_pinEnum_t p
 
     if (pullupEnable == true)
     {
-        BIT_SET(*u8_pinReg, pin - 1);
+        BIT_SET(*u8_pinReg, pin);
     }
     else
     {
-        BIT_CLR(*u8_pinReg, pin - 1);
+        BIT_CLR(*u8_pinReg, pin);
     }
 }
 
@@ -206,11 +206,11 @@ void mcal_gpio_pinIOState_set(mcal_gpio_t *px_gpio, mcal_gpio_ioStateEnum_t x_io
     switch (x_ioState)
     {
     case MCAL_GPIO_INPUT:
-        BIT_CLR(*u8_ddrReg, px_gpio->pin - 1);
+        BIT_CLR(*u8_ddrReg, px_gpio->pin);
         break;
 
     case MCAL_GPIO_OUTPUT:
-        BIT_SET(*u8_ddrReg, px_gpio->pin - 1);
+        BIT_SET(*u8_ddrReg, px_gpio->pin);
         break;
 
     default:

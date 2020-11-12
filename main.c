@@ -13,6 +13,7 @@ void doutput_module_test(void);
 
 int main(void)
 {
+    //sei();
     doutputModule_t dout;
     dout.gpio.port = HEARTBEAT_LED_PORT;
     dout.gpio.pin = HEARTBEAT_LED_PIN;
@@ -37,13 +38,14 @@ int main(void)
     din.longPressMultiplier = 1000;
     dinputModule_init(&din);
 
+    /*
     mcal_timer_CFG_t x_timer;
     x_timer.channel_num = MCAL_TIMER_0;
     x_timer.timer_intMode = MCAL_TIMER_INT_DISABLE;
     x_timer.timer_prescaller = NO_PRESCALLER;
     x_timer.timerState = MCAL_TIMER_STOP;
     mcal_timer_init(&x_timer);
-
+*/
     mcal_uartConfig_t uartConfig;
     uartConfig.uart_channel = MCAL_UART_UART0;
     uartConfig.baudRate = 4800;
@@ -54,6 +56,14 @@ int main(void)
     uartConfig.stopBits = MCAL_UART_STOP_BITS_1;
     uartConfig.usartEN = MCAL_UART_USART_DISABLE;
     mcal_uart_init(&uartConfig);
+
+    mcal_pwmConfig_t pwmCfg;
+    pwmCfg.timer = MCAL_TIMER_0;
+    pwmCfg.duty = 50;
+    pwmCfg.freq = MCAL_PWM_FREQ_1024;
+    pwmCfg.state = MCAL_PWM_START;
+    mcal_pwm_init(&pwmCfg);
+
     // bsp_clockConfig_set();
     // bsp_interruptPriorities_set();
 
@@ -80,14 +90,15 @@ int main(void)
         //heartbeat_update(NULL);
         _delay_ms(1);
     }
+    return 0;
 }
 
 void doutput_module_test(void)
 {
     static uint8_t state = MCAL_GPIO_HIGH;
 
-    mcal_timer_delay_ms(MCAL_TIMER_0, 1000);
-    //_delay_ms(1000);
+    //mcal_timer_delay_ms(MCAL_TIMER_0, 1000);
+    _delay_ms(1000);
 
     if (state == MCAL_GPIO_HIGH)
     {
@@ -99,5 +110,5 @@ void doutput_module_test(void)
     }
 
     doutputModule_state_set(HEARTBIT_OUTPUT, state);
-    doutputModule_state_set(SWITCH_OUTPUT, (gpio_state_t)dinputModule_state_get(SWITCH_INPUT));
+    doutputModule_state_set(SWITCH_OUTPUT, dinputModule_state_get(SWITCH_INPUT));
 }

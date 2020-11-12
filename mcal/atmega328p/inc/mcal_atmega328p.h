@@ -9,7 +9,7 @@
 #include "bsp.h"
 #include "def.h"
 #include "avr/io.h"
-//#include "avr/interrupt.h"
+#include "avr/interrupt.h"
 #include "util/delay.h"
 //#include "util/twi.h"
 //#include "avr/wdt.h"
@@ -42,15 +42,14 @@ typedef uint8_t mcal_gpio_portEnum_t;
 #define MCAL_GPIO_PORTD 2u
 
 typedef uint8_t mcal_gpio_pinEnum_t;
-#define MCAL_GPIO_PIN0 GPIO_BIT_0
-#define MCAL_GPIO_PIN1 GPIO_BIT_1
-#define MCAL_GPIO_PIN2 GPIO_BIT_2
-#define MCAL_GPIO_PIN3 GPIO_BIT_3
-#define MCAL_GPIO_PIN4 GPIO_BIT_4
-#define MCAL_GPIO_PIN5 GPIO_BIT_5
-#define MCAL_GPIO_PIN6 GPIO_BIT_6
-#define MCAL_GPIO_PIN7 GPIO_BIT_7
-#define MCAL_GPIO_PIN_ALL GPIO_BIT_ALL
+#define MCAL_GPIO_PIN0 0u
+#define MCAL_GPIO_PIN1 1u
+#define MCAL_GPIO_PIN2 2u
+#define MCAL_GPIO_PIN3 3u
+#define MCAL_GPIO_PIN4 4u
+#define MCAL_GPIO_PIN5 5u
+#define MCAL_GPIO_PIN6 6u
+#define MCAL_GPIO_PIN7 7u
 
 typedef uint8_t mcal_gpio_ioStateEnum_t;
 #define MCAL_GPIO_INPUT GPIO_INPUT_MODE
@@ -295,9 +294,9 @@ void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 #define TIFR_OCRA_FLAG_MASK 0x02
 #define TIFR_OCRB_FLAG_MASK 0x04
 
-#define TIMER0_MAX_COUNT 255
-#define TIMER1_MAX_COUNT 65536
-#define TIMER2_MAX_COUNT 255
+#define TIMER0_MAX_COUNT 255UL
+#define TIMER1_MAX_COUNT 65536UL
+#define TIMER2_MAX_COUNT 255UL
 
 typedef enum
 {
@@ -380,35 +379,44 @@ void mcal_timer_softWareCap(mcal_timer_t *px_tb);
 */
 /********************************************************************************/
 // pwm
-// TODO: redo these values
+typedef enum
+{
+    MCAL_PWM_0 = 0u,
+    MCAL_PWM_1,
+    MCAL_PWM_2,
+    MCAL_PWM_MAX_NUM
+} mcal_pwm_t;
+
+typedef enum
+{
+    MCAL_PWM_STOP = 0u,
+    MCAL_PWM_START
+} mcal_pwm_state_t;
+
+typedef enum
+{
+    MCAL_PWM_FREQ_1,      // PRESCALLER = 1
+    MCAL_PWM_FREQ_8,      // PRESCALLER = 8
+    MCAL_PWM_FREQ_64,     // PRESCALLER = 64
+    MCAL_PWM_FREQ_256,    // PRESCALLER = 256
+    MCAL_PWM_FREQ_1024,   // PRESCALLER = 1024
+} mcal_pwm_freq_t0_t2;
+
 typedef struct
 {
-    mcal_gpio_portEnum_t port;
-    mcal_gpio_pinEnum_t pin;
+    mcal_timer_t timer;
     uint32_t freq;
-    uint32_t duty;
-    uint8_t type;
+    uint8_t duty;
+    mcal_pwm_state_t state;
 } mcal_pwmConfig_t;
 
-typedef uint8_t mcal_pwm_t;
-#define MCAL_PWM_0
-#define MCAL_PWM_1
-#define MCAL_PWM_2
-#define MCAL_PWM_3
-#define MCAL_PWM_4
-#define MCAL_PWM_5
-#define MCAL_PWM_6
-#define MCAL_PWM_7
+#define SWPWM_PORT MCAL_GPIO_PORTC
+#define SWPWM_PIN MCAL_GPIO_PIN0
 
-typedef uint32_t mcal_pwm_state_t;
-#define MCAL_PWM_START
-#define MCAL_PWM_STOP
-
-void mcal_pwm_init(void);
-void mcal_pwm_channel_set(mcal_pwm_t *x_pwmInerface, mcal_pwmConfig_t *x_pwmConfig);
-void mcal_pwm_channelState_set(mcal_pwm_t *x_pwmInerface, mcal_pwm_state_t x_state);
-void mcal_pwm_channel_enable(mcal_pwm_t *x_pwmInerface);
-void mcal_pwm_channel_disable(mcal_pwm_t *x_pwmInerface);
+void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg);
+void mcal_pwm_channelState_set(mcal_pwm_t x_pwmInerface, mcal_pwm_state_t x_state);
+void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface);
+void mcal_pwm_channel_disable(mcal_pwm_t x_pwmInerface);
 
 /********************************************************************************/
 // adc

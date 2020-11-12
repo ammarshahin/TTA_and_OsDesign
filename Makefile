@@ -78,8 +78,9 @@ component/heartbeat/heartbeat.c \
 driver/gpio/gpio.c \
 main.c \
 mcal/atmega328p/src/mcal_atmega328p_gpio.c \
-mcal/atmega328p/src/mcal_atmega328p_timer.c\
-mcal/atmega328p/src/mcal_atmega328p_uart.c\
+mcal/atmega328p/src/mcal_atmega328p_timer.c \
+mcal/atmega328p/src/mcal_atmega328p_uart.c \
+mcal/atmega328p/src/mcal_atmega328p_pwm.c \
 mcal/mcal.c \
 utils/utils.c
 
@@ -101,7 +102,8 @@ driver/gpio/gpio.o \
 main.o \
 mcal/atmega328p/src/mcal_atmega328p_gpio.o \
 mcal/atmega328p/src/mcal_atmega328p_timer.o \
-mcal/atmega328p/src/mcal_atmega328p_uart.o\
+mcal/atmega328p/src/mcal_atmega328p_uart.o \
+mcal/atmega328p/src/mcal_atmega328p_pwm.o \
 mcal/mcal.o \
 utils/utils.o
 
@@ -116,7 +118,8 @@ driver/gpio/gpio.o \
 main.o \
 mcal/atmega328p/src/mcal_atmega328p_gpio.o \
 mcal/atmega328p/src/mcal_atmega328p_timer.o \
-mcal/atmega328p/src/mcal_atmega328p_uart.o\
+mcal/atmega328p/src/mcal_atmega328p_uart.o \
+mcal/atmega328p/src/mcal_atmega328p_pwm.o \
 mcal/mcal.o \
 utils/utils.o
 
@@ -131,7 +134,8 @@ driver/gpio/gpio.d \
 main.d \
 mcal/atmega328p/src/mcal_atmega328p_gpio.d \
 mcal/atmega328p/src/mcal_atmega328p_timer.d \
-mcal/atmega328p/src/mcal_atmega328p_uart.d\
+mcal/atmega328p/src/mcal_atmega328p_uart.d \
+mcal/atmega328p/src/mcal_atmega328p_pwm.d \
 mcal/mcal.d \
 utils/utils.d
 
@@ -146,7 +150,8 @@ driver/gpio/gpio.d \
 main.d \
 mcal/atmega328p/src/mcal_atmega328p_gpio.d \
 mcal/atmega328p/src/mcal_atmega328p_timer.d \
-mcal/atmega328p/src/mcal_atmega328p_uart.d\
+mcal/atmega328p/src/mcal_atmega328p_uart.d \
+mcal/atmega328p/src/mcal_atmega328p_pwm.d \
 mcal/mcal.d \
 utils/utils.d
 
@@ -227,7 +232,11 @@ mcal/atmega328p/src/mcal_atmega328p_uart.o: mcal/atmega328p/src/mcal_atmega328p_
 	@$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	
 	
-
+mcal/atmega328p/src/mcal_atmega328p_pwm.o: mcal/atmega328p/src/mcal_atmega328p_pwm.c
+	@echo Building file: $<
+	@$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	
+	
 
 mcal/mcal.o: mcal/mcal.c
 	@echo Building file: $<
@@ -264,7 +273,7 @@ endif
 # All Target
 all: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) fastClean load
 
-build: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) load
+build: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
@@ -287,17 +296,19 @@ git: clean
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
-	-$(RM) $(C_DEPS_AS_ARGS)   
-	rm -rf "GccApplication1.elf" "GccApplication1.a" "GccApplication1.hex" "GccApplication1.lss" "GccApplication1.eep" "GccApplication1.map" "GccApplication1.srec" "GccApplication1.usersignatures"
-	find . -type f -name "*.o" -delete
-	find . -type f -name "*.d" -delete
+	@echo cleaning....
+	@-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
+	@-$(RM) $(C_DEPS_AS_ARGS)   
+	@rm -rf "GccApplication1.elf" "GccApplication1.a" "GccApplication1.hex" "GccApplication1.lss" "GccApplication1.eep" "GccApplication1.map" "GccApplication1.srec" "GccApplication1.usersignatures"
+	@find . -type f -name "*.o" -delete
+	@find . -type f -name "*.d" -delete
 
 
 
 fastClean:
-	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
-	-$(RM) $(C_DEPS_AS_ARGS)   
-	rm -rf "GccApplication1.a" "GccApplication1.lss" "GccApplication1.eep" "GccApplication1.map" "GccApplication1.srec" "GccApplication1.usersignatures"
-	find . -type f -name "*.o" -delete
-	find . -type f -name "*.d" -delete
+	@echo cleaning....
+	@-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
+	@-$(RM) $(C_DEPS_AS_ARGS)   
+	@rm -rf "GccApplication1.a" "GccApplication1.lss" "GccApplication1.eep" "GccApplication1.map" "GccApplication1.srec" "GccApplication1.usersignatures"
+	@find . -type f -name "*.o" -delete
+	@find . -type f -name "*.d" -delete

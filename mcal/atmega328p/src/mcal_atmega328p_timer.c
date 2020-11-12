@@ -313,14 +313,14 @@ uint8_t mcal_timer_timerFlag_get(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_
 }
 
 /**
- * @function: Timers_timer0_Delay_ms
- * @description: Delay function pooling based to block the code for a specific amount of time
+ * @function: mcal_timer_delay_ms
+ * @description: Delay function pooling based to block the code for a specific amount of time in us with minimum number of 3 at prescaller 8 and 1MHZ F_CPU , and 262 at prescaller 1024 and 1MHZ F_CPU
  * @param x_timerCh the timer channel used
  * @param delay the time I want to delay in ms
  */
 void mcal_timer_delay_ms(mcal_timer_t x_timerCh, uint16_t delay)
 {
-    uint64_t counter = 0;
+    volatile uint64_t counter = 0;
     volatile uint8_t *timer_flag_reg = NULL;
 
     switch (x_timerCh)
@@ -359,10 +359,10 @@ void mcal_timer_delay_ms(mcal_timer_t x_timerCh, uint16_t delay)
 }
 
 /**
- * @function: Timers_timer0_Delay_ms
- * @description: Delay function pooling based to block the code for a specific amount of time
+ * @function: mcal_timer_delay_us
+ * @description: Delay function pooling based to block the code for a specific amount of time in us with minimum number of 255 at prescaller 1 and 1MHZ F_CPU ,and 261120 at prescaller 1024 and 1MHZ F_CPU
  * @param x_timerCh the timer channel used
- * @param delay the time I want to delay in ns
+ * @param delay the time I want to delay in us
  */
 void mcal_timer_delay_us(mcal_timer_t x_timerCh, uint16_t delay)
 {
@@ -402,4 +402,56 @@ void mcal_timer_delay_us(mcal_timer_t x_timerCh, uint16_t delay)
         *timer_flag_reg |= TIFR_TOV_FLAG_MASK;
     }
     mcal_timer_timerChannel_disble(x_timerCh);
+}
+
+/**
+ * @function: mcal_timer_delay_ns
+ * @description: Delay function pooling based to block the code for a specific amount of time in us with minimum number of 255000 at prescaller 1 and 1MHZ F_CPU.
+ * @param x_timerCh the timer channel used
+ * @param delay the time I want to delay in ns
+ */
+void mcal_timer_delay_ns(mcal_timer_t x_timerCh, uint16_t delay)
+{
+    volatile uint64_t counter = 0;
+    volatile uint8_t *timer_flag_reg = NULL;
+
+    switch (x_timerCh)
+    {
+    case MCAL_TIMER_0:
+        counter = (uint64_t)((uint64_t)delay * F_CPU) / ((uint64_t)TIMER0_MAX_COUNT * (uint64_t)gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000000UL);
+        TCNT0 = 0u;
+        timer_flag_reg = &(TIFR0);
+        break;
+
+    case MCAL_TIMER_1:
+        counter = (uint64_t)((uint64_t)delay * F_CPU) / ((uint64_t)TIMER1_MAX_COUNT * (uint64_t)gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000000UL);
+        TCNT1L = 0u;
+        TCNT1H = 0u;
+        timer_flag_reg = &(TIFR1);
+        break;
+
+    case MCAL_TIMER_2:
+        counter = (uint64_t)((uint64_t)delay * F_CPU) / ((uint64_t)TIMER2_MAX_COUNT * (uint64_t)gArr_timers_internalHandler[x_timerCh].absolute_value * 1000000000UL);
+        TCNT2 = 0u;
+        timer_flag_reg = &(TIFR2);
+        break;
+
+    default:
+        break;
+    }
+
+    mcal_timer_timerChannel_enable(x_timerCh);
+    while (counter--)
+    {
+        while ((*timer_flag_reg & TIFR_TOV_FLAG_MASK) == false)
+            ;
+        *timer_flag_reg |= TIFR_TOV_FLAG_MASK;
+    }
+    mcal_timer_timerChannel_disble(x_timerCh);
+}
+
+/* ISR's */
+ISR(TIMER0_OVF_vect)
+{
+    //
 }
