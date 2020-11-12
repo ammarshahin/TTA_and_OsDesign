@@ -10,6 +10,7 @@
 #include "utils.h"
 
 void doutput_module_test(void);
+void dinput_module_test(void);
 
 int main(void)
 {
@@ -84,10 +85,11 @@ int main(void)
 
     while (1)
     {
-        doutput_module_test();
         doutputModule_update(NULL);
         dinputModule_update(NULL);
         //heartbeat_update(NULL);
+        doutput_module_test();
+        dinput_module_test();
         _delay_ms(1);
     }
     return 0;
@@ -96,19 +98,28 @@ int main(void)
 void doutput_module_test(void)
 {
     static uint8_t state = MCAL_GPIO_HIGH;
-
-    //mcal_timer_delay_ms(MCAL_TIMER_0, 1000);
-    _delay_ms(1000);
-
-    if (state == MCAL_GPIO_HIGH)
+    static uint16_t internalTimer = 0;
+    internalTimer++;
+    if (internalTimer >= 500)
     {
-        state = MCAL_GPIO_LOW;
+        internalTimer = 0;
+        if (state == MCAL_GPIO_HIGH)
+        {
+            state = MCAL_GPIO_LOW;
+        }
+        else
+        {
+            state = MCAL_GPIO_HIGH;
+        }
+        doutputModule_state_set(HEARTBIT_OUTPUT, state);
     }
     else
     {
-        state = MCAL_GPIO_HIGH;
+        // Do nothing
     }
+}
 
-    doutputModule_state_set(HEARTBIT_OUTPUT, state);
+void dinput_module_test(void)
+{
     doutputModule_state_set(SWITCH_OUTPUT, dinputModule_state_get(SWITCH_INPUT));
 }
