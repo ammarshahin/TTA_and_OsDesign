@@ -8,8 +8,8 @@ void mcal_gpio_init(void)
 
 void mcal_gpio_pin_init(mcal_gpio_t *px_gpio)
 {
-    volatile uint8_t *u8_ddrReg;
-    volatile uint8_t *u8_portReg;
+    volatile uint8_t *u8_ddrReg = NULL;
+    volatile uint8_t *u8_portReg = NULL;
 
     switch (px_gpio->port)
     {

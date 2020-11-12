@@ -397,7 +397,9 @@ typedef enum
 {
     MCAL_PWM_FREQ_1,      // PRESCALLER = 1
     MCAL_PWM_FREQ_8,      // PRESCALLER = 8
+    MCAL_PWM_FREQ_32,     // PRESCALLER = 32
     MCAL_PWM_FREQ_64,     // PRESCALLER = 64
+    MCAL_PWM_FREQ_128,    // PRESCALLER = 128
     MCAL_PWM_FREQ_256,    // PRESCALLER = 256
     MCAL_PWM_FREQ_1024,   // PRESCALLER = 1024
 } mcal_pwm_freq_t0_t2;
