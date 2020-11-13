@@ -250,45 +250,6 @@ void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 
 /********************************************************************************/
 // timer
-/* Registers mapping */
-/*
-#define TIMSK0 *((reg_type)0x6E)
-#define TIMSK1 *((reg_type)0x6F)
-#define TIMSK2 *((reg_type)0x70)
-
-#define TIFR0 *((reg_type)0x35)
-#define TIFR1 *((reg_type)0x36)
-#define TIFR2 *((reg_type)0x37)
-
-#define TWCR *((reg_type)0xbc)
-
-// Timer 0
-#define TCCR0A *((reg_type)0x44)
-#define TCCR0B *((reg_type)0x45)
-#define TCNT0 *((reg_type)0x46)
-#define OCR0A *((reg_type)0x47)
-#define OCR0B *((reg_type)0x48)
-
-// Timer 2
-#define TCCR2A *((reg_type)0xB0)
-#define TCCR2B *((reg_type)0xB1)
-#define TCNT2 *((reg_type)0xB2)
-#define OCR2A *((reg_type)0xB3)
-#define OCR2B *((reg_type)0xB4)
-
-// Timer 1
-#define TCCR1A *((reg_type)0x80)
-#define TCCR1B *((reg_type)0x81)
-#define TCCR1C *((reg_type)0x82)
-#define TCNT1L *((reg_type)0x84)
-#define TCNT1H *((reg_type)0x85)
-#define ICR1L *((reg_type)0x86)
-#define ICR1H *((reg_type)0x87)
-#define OCR1AL *((reg_type)0x88)
-#define OCR1AH *((reg_type)0x89)
-#define OCR1BL *((reg_type)0x8A)
-#define OCR1BH *((reg_type)0x8B)
-*/
 
 #define TIFR_TOV_FLAG_MASK 0x01
 #define TIFR_OCRA_FLAG_MASK 0x02

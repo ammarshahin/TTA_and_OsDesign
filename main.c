@@ -11,6 +11,7 @@
 
 void doutput_module_test(void);
 void dinput_module_test(void);
+void uart_mcal_test(void);
 
 int main(void)
 {
@@ -49,7 +50,7 @@ int main(void)
 */
     mcal_uartConfig_t uartConfig;
     uartConfig.uart_channel = MCAL_UART_UART0;
-    uartConfig.baudRate = 4800;
+    uartConfig.baudRate = 250000;
     uartConfig.dataBits = MCAL_UART_DATA_BITS_8;
     uartConfig.interruptEN = MCAL_UART_INTERRUPT_NONE;
     uartConfig.mode = MCAL_UART_MODE_TX | MCAL_UART_MODE_RX;
@@ -90,6 +91,7 @@ int main(void)
         //heartbeat_update(NULL);
         doutput_module_test();
         dinput_module_test();
+        mcal_uart_test();
         _delay_ms(1);
     }
     return 0;
@@ -123,4 +125,19 @@ void doutput_module_test(void)
 void dinput_module_test(void)
 {
     doutputModule_state_set(SWITCH_OUTPUT, dinputModule_state_get(SWITCH_INPUT));
+}
+
+void uart_mcal_test(void)
+{
+    static uint16_t internalTimer = 0;
+    internalTimer++;
+    if (internalTimer >= 1000)
+    {
+        internalTimer = 0;
+        mcal_uart_data_put(MCAL_UART_UART0, 'f');
+    }
+    else
+    {
+        //
+    }
 }
