@@ -271,7 +271,7 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) fastClean load
+all: clean $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES) load
 
 build: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 

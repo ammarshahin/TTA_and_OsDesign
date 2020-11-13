@@ -103,6 +103,7 @@ void doutput_module_test(void)
     if (internalTimer >= 500)
     {
         internalTimer = 0;
+        // mcal_timer_delay_ms(MCAL_TIMER_0, 500);
         if (state == MCAL_GPIO_HIGH)
         {
             state = MCAL_GPIO_LOW;
