@@ -60,10 +60,11 @@ void mcal_uart_init(mcal_uartConfig_t *uartCFG)
 }
 
 /**
- * @brief 
+ * @funcion: mcal_uart_data_put 
+ * @brief This function is used send data through the uart
  * 
- * @param x_uart 
- * @param u8_data 
+ * @param x_uart the uart channel
+ * @param u8_data the data to be sent
  */
 void mcal_uart_data_put(mcal_uart_t x_uart, uint8_t u8_data)
 {
@@ -74,8 +75,8 @@ void mcal_uart_data_put(mcal_uart_t x_uart, uint8_t u8_data)
  * @function: mcal_uart_data_get
  * @brief this function is used to get the recivied value from the uart 
  * 
- * @param x_uart 
- * @return uint8_t 
+ * @param x_uart the uart channel
+ * @return uint8_t the data received
  */
 uint8_t mcal_uart_data_get(mcal_uart_t x_uart)
 {

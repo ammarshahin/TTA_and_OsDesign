@@ -62,7 +62,7 @@ int main(void)
     mcal_pwmConfig_t pwmCfg;
     pwmCfg.timer = MCAL_TIMER_2;
     pwmCfg.duty = 50;
-    pwmCfg.freq = MCAL_PWM_FREQ_1024;
+    pwmCfg.freq = MCAL_PWM_FREQ_1;
     pwmCfg.state = MCAL_PWM_START;
     mcal_pwm_init(&pwmCfg);
 
@@ -91,7 +91,7 @@ int main(void)
         //heartbeat_update(NULL);
         doutput_module_test();
         dinput_module_test();
-        mcal_uart_test();
+        uart_mcal_test();
         _delay_ms(1);
     }
     return 0;
