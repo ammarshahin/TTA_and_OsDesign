@@ -50,7 +50,7 @@ int main(void)
 */
     mcal_uartConfig_t uartConfig;
     uartConfig.uart_channel = MCAL_UART_UART0;
-    uartConfig.baudRate = 250000;
+    uartConfig.baudRate = 9600;
     uartConfig.dataBits = MCAL_UART_DATA_BITS_8;
     uartConfig.interruptEN = MCAL_UART_INTERRUPT_NONE;
     uartConfig.mode = MCAL_UART_MODE_TX | MCAL_UART_MODE_RX;
@@ -60,9 +60,9 @@ int main(void)
     mcal_uart_init(&uartConfig);
 
     mcal_pwmConfig_t pwmCfg;
-    pwmCfg.timer = MCAL_TIMER_2;
-    pwmCfg.duty = 50;
-    pwmCfg.freq = MCAL_PWM_FREQ_1;
+    pwmCfg.timer = MCAL_TIMER_0;
+    pwmCfg.duty = 20;
+    pwmCfg.freq = MCAL_PWM_FREQ_256;
     pwmCfg.state = MCAL_PWM_START;
     mcal_pwm_init(&pwmCfg);
 
@@ -131,7 +131,7 @@ void uart_mcal_test(void)
 {
     static uint16_t internalTimer = 0;
     internalTimer++;
-    if (internalTimer >= 1000)
+    if (internalTimer >= 500)
     {
         internalTimer = 0;
         mcal_uart_data_put(MCAL_UART_UART0, 'f');

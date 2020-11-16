@@ -46,17 +46,17 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg)
         /* set the timer to work in the pwm mode */
         BIT_SET(TCCR0A, 0);
         BIT_SET(TCCR0A, 1);
-        BIT_SET(TCCR0B, 3);
+        BIT_CLR(TCCR0B, 3);
 
         /* set the timer mode */
-        BIT_SET(TCCR0A, 6);
-        BIT_CLR(TCCR0A, 7);
+        BIT_CLR(TCCR0A, 6);
+        BIT_SET(TCCR0A, 7);
 
         /* set the timer prescaller/FREQ */
         gArr_pwm_internal_handler.prescaller[gArr_pwm_internal_handler.internal_counter] = pwmCfg->freq;
 
         /* set the duty */
-        OCR0A = (uint8_t)((pwmCfg->duty * TIMER0_MAX_COUNT) / 100);
+        OCR0A = (uint8_t)(((uint16_t)pwmCfg->duty * TIMER0_MAX_COUNT) / 100UL);
 
         if (pwmCfg->state == MCAL_PWM_START)
         {
@@ -77,17 +77,17 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg)
         /* set the timer to work in the pwm mode */
         BIT_SET(TCCR0A, 0);
         BIT_SET(TCCR0A, 1);
-        BIT_SET(TCCR0B, 3);
+        BIT_CLR(TCCR0B, 3);
 
         /* set the timer mode */
-        BIT_SET(TCCR0A, 6);
-        BIT_CLR(TCCR0A, 7);
+        BIT_CLR(TCCR0A, 6);
+        BIT_SET(TCCR0A, 7);
 
         /* set the timer prescaller/FREQ */
         gArr_pwm_internal_handler.prescaller[gArr_pwm_internal_handler.internal_counter] = pwmCfg->freq;
 
         /* set the duty */
-        OCR0A = (uint8_t)((pwmCfg->duty * TIMER0_MAX_COUNT) / 100);
+        OCR1A = (uint8_t)(((uint16_t)pwmCfg->duty * TIMER0_MAX_COUNT) / 100);
 
         if (pwmCfg->state == MCAL_PWM_START)
         {
@@ -107,17 +107,17 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg)
         /* set the timer to work in the pwm mode */
         BIT_SET(TCCR2A, 0);
         BIT_SET(TCCR2A, 1);
-        BIT_SET(TCCR2B, 3);
+        BIT_CLR(TCCR2B, 3);
 
         /* set the timer mode */
-        BIT_SET(TCCR2A, 6);
-        BIT_CLR(TCCR2A, 7);
+        BIT_CLR(TCCR2A, 6);
+        BIT_SET(TCCR2A, 7);
 
         /* set the timer prescaller/FREQ */
         gArr_pwm_internal_handler.prescaller[gArr_pwm_internal_handler.internal_counter] = pwmCfg->freq;
 
         /* set the duty */
-        OCR2A = (uint8_t)((pwmCfg->duty * TIMER2_MAX_COUNT) / 100);
+        OCR2A = (uint8_t)(((uint16_t)pwmCfg->duty * TIMER2_MAX_COUNT) / 100);
 
         if (pwmCfg->state == MCAL_PWM_START)
         {
@@ -183,6 +183,7 @@ void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface)
             BIT_CLR(TCCR0B, 1);
             BIT_SET(TCCR0B, 2);
             break;
+
         default:
             BIT_CLR(TCCR0B, 0);
             BIT_CLR(TCCR0B, 1);
@@ -190,9 +191,6 @@ void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface)
             break;
         }
 
-        /* set the timer mode */
-        BIT_SET(TCCR0A, 6);
-        BIT_CLR(TCCR0A, 7);
         break;
 
         /* TODO: needs rework */
@@ -236,9 +234,6 @@ void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface)
             break;
         }
 
-        /* set the timer mode */
-        BIT_SET(TCCR1A, 6);
-        BIT_CLR(TCCR1A, 7);
         break;
 
     case MCAL_TIMER_2:
@@ -293,9 +288,6 @@ void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface)
             break;
         }
 
-        /* set the timer mode */
-        BIT_SET(TCCR2A, 6);
-        BIT_CLR(TCCR2A, 7);
         break;
 
     default:
