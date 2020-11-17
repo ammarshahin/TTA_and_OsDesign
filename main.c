@@ -62,7 +62,7 @@ int main(void)
     mcal_pwmConfig_t pwmCfg;
     pwmCfg.timer = MCAL_TIMER_0;
     pwmCfg.duty = 20;
-    pwmCfg.freq = 62;
+    pwmCfg.freq = 65;
     pwmCfg.state = MCAL_PWM_START;
     mcal_pwm_init(&pwmCfg);
 
