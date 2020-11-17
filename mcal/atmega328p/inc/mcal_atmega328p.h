@@ -377,10 +377,10 @@ typedef struct
 #define SWPWM_PIN MCAL_GPIO_PIN0
 
 void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg);
-void mcal_pwm_channelState_set(mcal_pwm_t x_pwmInerface, mcal_pwm_state_t x_state);
-void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface);
-void mcal_pwm_channel_disable(mcal_pwm_t x_pwmInerface);
-void mcal_pwm_frequency_set(mcal_pwmConfig_t *pwmCfg);
+void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg);
+void mcal_pwm_channelState_set(mcal_pwmConfig_t *pwmCfg);
+void mcal_pwm_channel_enable(mcal_pwmConfig_t *pwmCfg);
+void mcal_pwm_channel_disable(mcal_pwmConfig_t *pwmCfg);
 
 /********************************************************************************/
 // adc

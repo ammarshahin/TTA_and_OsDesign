@@ -17,16 +17,6 @@
 #ifdef DEBUG
 uint8_t buff[10] = {0};
 #endif
-typedef struct
-{
-    mcal_timer_t timer;
-    uint32_t prescaller;
-    uint16_t max_timer_value_ocr;
-} mcal_pwm_internalHandler_t;
-
-static mcal_pwm_internalHandler_t gArr_pwm_internal_handler[MCAL_PWM_MAX_NUM];
-
-static uint8_t gu8_pwm_internal_counter;
 
 static mcal_timer_t gx_swPwm_timer;
 static mcal_gpio_t gx_sw_gpio;
@@ -43,8 +33,6 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg)
     x_gpio.ioState = MCAL_GPIO_OUTPUT;
     x_gpio.pinState = MCAL_GPIO_LOW;
 
-    gArr_pwm_internal_handler[gu8_pwm_internal_counter].timer = pwmCfg->timer;
-
     switch (pwmCfg->timer)
     {
     case MCAL_TIMER_0:
@@ -54,15 +42,15 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg)
         mcal_gpio_pin_init(&x_gpio);
 
         /* set the pwm mode mode{inverting/noninverting} */
-        BIT_CLR(TCCR0A, 4);
-        BIT_SET(TCCR0A, 5);
+        BIT_CLR(TCCR0A, COM0B0);
+        BIT_SET(TCCR0A, COM0B1);
 
         /* set the Freq and duty */
-        mcal_pwm_frequency_set(pwmCfg);
+        mcal_pwm_frequencyAndDuty_set(pwmCfg);
 
         if (pwmCfg->state == MCAL_PWM_START)
         {
-            mcal_pwm_channel_enable(gu8_pwm_internal_counter);
+            mcal_pwm_channel_enable(pwmCfg);
         }
 
         break;
@@ -86,7 +74,7 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg)
         BIT_SET(TCCR0A, 7);
 
         /* set the timer prescaller/FREQ */
-        gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller = pwmCfg->freq;
+        prescaller = pwmCfg->freq;
 
         /* set the duty */
         OCR1A = (uint8_t)(((uint16_t)pwmCfg->duty * TIMER0_MAX_COUNT) / 100);
@@ -116,7 +104,7 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg)
         BIT_SET(TCCR2A, 7);
 
         /* set the timer prescaller/FREQ */
-        gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller = pwmCfg->freq;
+        prescaller = pwmCfg->freq;
 
         /* set the duty */
         OCR2A = (uint8_t)(((uint16_t)pwmCfg->duty * TIMER2_MAX_COUNT) / 100);
@@ -131,12 +119,12 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg)
     default:
         break;
     }
-    gu8_pwm_internal_counter++;
 }
 
-void mcal_pwm_frequency_set(mcal_pwmConfig_t *pwmCfg)
+void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
 {
     uint16_t prescaller = 0;
+
     switch (pwmCfg->timer)
     {
     case MCAL_PWM_0:
@@ -145,44 +133,59 @@ void mcal_pwm_frequency_set(mcal_pwmConfig_t *pwmCfg)
 
         if (prescaller < 1)
         {
-            gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller = 1;
+            prescaller = 1;
         }
         else if (prescaller < 8)
         {
-            gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller = 8;
+            prescaller = 8;
         }
         else if (prescaller < 64)
         {
-            gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller = 64;
+            prescaller = 64;
         }
         else if (prescaller < 256)
         {
-            gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller = 256;
+            prescaller = 256;
         }
         else if (prescaller < 1024)
         {
-            gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller = 1024;
+            prescaller = 1024;
         }
         else
         {
-            if ((pwmCfg->freq < 60) && (pwmCfg->freq > 31))
+            if ((pwmCfg->freq < 62) && (pwmCfg->freq > 31))
             {
                 /* set the timer to work in the phase correct pwm mode */
                 BIT_SET(TCCR0A, 0);
                 BIT_CLR(TCCR0A, 1);
                 BIT_SET(TCCR0B, 3);
-                gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller = 1024;
-                gArr_pwm_internal_handler[gu8_pwm_internal_counter].max_timer_value_ocr = F_CPU / (2 * pwmCfg->freq * gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller);
 
-                OCR0A = (uint8_t)gArr_pwm_internal_handler[gu8_pwm_internal_counter].max_timer_value_ocr;
+                prescaller = 1024;
+
+                OCR0A = (uint8_t)((F_CPU / (2 * pwmCfg->freq * prescaller)) - 1);
+
+#ifdef DEBUG
+                utils_itoa(OCR0A, buff);
+                mcal_uart_string_put(MCAL_UART_UART0, buff);
+                mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
+#endif
 
                 /* set the duty */
-                OCR0B = (uint8_t)(((uint16_t)pwmCfg->duty * gArr_pwm_internal_handler[gu8_pwm_internal_counter].max_timer_value_ocr) / 100UL);
+                OCR0B = (uint8_t)(((uint16_t)pwmCfg->duty * OCR0A) / 100UL);
+
+#ifdef DEBUG
+                utils_itoa(OCR0B, buff);
+                mcal_uart_string_put(MCAL_UART_UART0, buff);
+                mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
+#endif
+                pwmCfg->freq = (uint32_t)prescaller;
                 break;
             }
             else
             {
                 // Error >> Use Software PWM
+                pwmCfg->freq = 0;
+                break;
             }
         }
 
@@ -192,29 +195,29 @@ void mcal_pwm_frequency_set(mcal_pwmConfig_t *pwmCfg)
         BIT_SET(TCCR0B, 3);
 
 #ifdef DEBUG
-        utils_itoa(gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller, buff);
+        utils_itoa(prescaller, buff);
         mcal_uart_string_put(MCAL_UART_UART0, buff);
         mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
 #endif
 
-        // TODO: Make sure to cast these values after debugging
-        gArr_pwm_internal_handler[gu8_pwm_internal_counter].max_timer_value_ocr = F_CPU / (pwmCfg->freq * gArr_pwm_internal_handler[gu8_pwm_internal_counter].prescaller);
+        OCR0A = (uint8_t)((F_CPU / (pwmCfg->freq * prescaller)) - 1);
 
 #ifdef DEBUG
-        utils_itoa(gArr_pwm_internal_handler[gu8_pwm_internal_counter].max_timer_value_ocr, buff);
+        utils_itoa(OCR0A, buff);
         mcal_uart_string_put(MCAL_UART_UART0, buff);
         mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
 #endif
-        OCR0A = (uint8_t)gArr_pwm_internal_handler[gu8_pwm_internal_counter].max_timer_value_ocr;
 
         /* set the duty */
-        OCR0B = (uint8_t)(((uint16_t)pwmCfg->duty * gArr_pwm_internal_handler[gu8_pwm_internal_counter].max_timer_value_ocr) / 100UL);
+        OCR0B = (uint8_t)(((uint16_t)pwmCfg->duty * OCR0A) / 100UL);
 
 #ifdef DEBUG
         utils_itoa(OCR0B, buff);
         mcal_uart_string_put(MCAL_UART_UART0, buff);
         mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
 #endif
+
+        pwmCfg->freq = (uint32_t)prescaller;
         break;
 
     default:
@@ -228,9 +231,20 @@ void mcal_pwm_frequency_set(mcal_pwmConfig_t *pwmCfg)
  * @param x_pwmInerface 
  * @param x_state 
  */
-void mcal_pwm_channelState_set(mcal_pwm_t x_pwmInerface, mcal_pwm_state_t x_state)
+void mcal_pwm_channelState_set(mcal_pwmConfig_t *pwmCfg)
 {
-    //
+    if (pwmCfg->state == MCAL_PWM_START)
+    {
+        mcal_pwm_channel_enable(pwmCfg);
+    }
+    else if (pwmCfg->state == MCAL_PWM_STOP)
+    {
+        mcal_pwm_channel_disable(pwmCfg);
+    }
+    else
+    {
+        // Error
+    }
 }
 
 /**
@@ -238,12 +252,12 @@ void mcal_pwm_channelState_set(mcal_pwm_t x_pwmInerface, mcal_pwm_state_t x_stat
  * 
  * @param x_pwmInerface 
  */
-void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface)
+void mcal_pwm_channel_enable(mcal_pwmConfig_t *pwmCfg)
 {
-    switch (gArr_pwm_internal_handler[x_pwmInerface].timer)
+    switch (pwmCfg->timer)
     {
     case MCAL_TIMER_0:
-        switch (gArr_pwm_internal_handler[x_pwmInerface].prescaller)
+        switch (pwmCfg->freq)
         {
         case MCAL_PWM_FREQ_1:
             BIT_SET(TCCR0B, 0);
@@ -286,7 +300,7 @@ void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface)
 
         /* TODO: needs rework */
     case MCAL_TIMER_1:
-        switch (gArr_pwm_internal_handler[x_pwmInerface].prescaller)
+        switch (pwmCfg->freq)
         {
         case MCAL_PWM_FREQ_1:
             BIT_SET(TCCR1B, 0);
@@ -328,7 +342,7 @@ void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface)
         break;
 
     case MCAL_TIMER_2:
-        switch (gArr_pwm_internal_handler[x_pwmInerface].prescaller)
+        switch (pwmCfg->freq)
         {
         case MCAL_PWM_FREQ_1:
             BIT_SET(TCCR2B, 0);
@@ -373,9 +387,9 @@ void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface)
             break;
 
         default:
-            BIT_CLR(TCCR0B, 0);
-            BIT_CLR(TCCR0B, 1);
-            BIT_CLR(TCCR0B, 2);
+            BIT_CLR(TCCR2B, 0);
+            BIT_CLR(TCCR2B, 1);
+            BIT_CLR(TCCR2B, 2);
             break;
         }
 
@@ -391,15 +405,26 @@ void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface)
  * 
  * @param x_pwmInerface 
  */
-void mcal_pwm_channel_disable(mcal_pwm_t x_pwmInerface)
+void mcal_pwm_channel_disable(mcal_pwmConfig_t *pwmCfg)
 {
-    switch (gArr_pwm_internal_handler[x_pwmInerface].timer)
+    switch (pwmCfg->timer)
     {
     case MCAL_TIMER_0:
         BIT_CLR(TCCR0B, 0);
         BIT_CLR(TCCR0B, 1);
         BIT_CLR(TCCR0B, 2);
+        break;
 
+    case MCAL_TIMER_1:
+        BIT_CLR(TCCR1B, 0);
+        BIT_CLR(TCCR1B, 1);
+        BIT_CLR(TCCR1B, 2);
+        break;
+
+    case MCAL_TIMER_2:
+        BIT_CLR(TCCR2B, 0);
+        BIT_CLR(TCCR2B, 1);
+        BIT_CLR(TCCR2B, 2);
         break;
     default:
         break;

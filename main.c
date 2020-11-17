@@ -9,9 +9,12 @@
 #include "component/dinput_module/dinput_module.h"
 #include "utils.h"
 
+mcal_pwmConfig_t pwmCfg;
+
 void doutput_module_test(void);
 void dinput_module_test(void);
 void uart_mcal_test(void);
+void pwm_test(void);
 
 int main(void)
 {
@@ -59,10 +62,9 @@ int main(void)
     uartConfig.usartEN = MCAL_UART_USART_DISABLE;
     mcal_uart_init(&uartConfig);
 
-    mcal_pwmConfig_t pwmCfg;
     pwmCfg.timer = MCAL_TIMER_0;
     pwmCfg.duty = 20;
-    pwmCfg.freq = 65;
+    pwmCfg.freq = 14145;
     pwmCfg.state = MCAL_PWM_START;
     mcal_pwm_init(&pwmCfg);
 
@@ -92,6 +94,7 @@ int main(void)
         doutput_module_test();
         dinput_module_test();
         //uart_mcal_test();
+        pwm_test();
         _delay_ms(1);
     }
     return 0;
@@ -135,6 +138,21 @@ void uart_mcal_test(void)
     {
         internalTimer = 0;
         mcal_uart_data_put(MCAL_UART_UART0, 'f');
+    }
+    else
+    {
+        //
+    }
+}
+
+void pwm_test(void)
+{
+    static uint16_t internalTimer = 0;
+    internalTimer++;
+    if (internalTimer >= 10000)
+    {
+        internalTimer = 0;
+        // mcal_pwm_channel_disable(&pwmCfg);
     }
     else
     {
