@@ -356,14 +356,14 @@ typedef enum
 
 typedef enum
 {
-    MCAL_PWM_FREQ_1,      // PRESCALLER = 1
-    MCAL_PWM_FREQ_8,      // PRESCALLER = 8
-    MCAL_PWM_FREQ_32,     // PRESCALLER = 32
-    MCAL_PWM_FREQ_64,     // PRESCALLER = 64
-    MCAL_PWM_FREQ_128,    // PRESCALLER = 128
-    MCAL_PWM_FREQ_256,    // PRESCALLER = 256
-    MCAL_PWM_FREQ_1024,   // PRESCALLER = 1024
-} mcal_pwm_freq_t0_t2;
+    MCAL_PWM_FREQ_1 = 1,         // PRESCALLER = 1
+    MCAL_PWM_FREQ_8 = 8,         // PRESCALLER = 8
+    MCAL_PWM_FREQ_32 = 32,       // PRESCALLER = 32
+    MCAL_PWM_FREQ_64 = 64,       // PRESCALLER = 64
+    MCAL_PWM_FREQ_128 = 128,     // PRESCALLER = 128
+    MCAL_PWM_FREQ_256 = 256,     // PRESCALLER = 256
+    MCAL_PWM_FREQ_1024 = 1024,   // PRESCALLER = 1024
+} mcal_pwm_prescaller;
 
 typedef struct
 {
@@ -380,6 +380,7 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg);
 void mcal_pwm_channelState_set(mcal_pwm_t x_pwmInerface, mcal_pwm_state_t x_state);
 void mcal_pwm_channel_enable(mcal_pwm_t x_pwmInerface);
 void mcal_pwm_channel_disable(mcal_pwm_t x_pwmInerface);
+void mcal_pwm_frequency_set(mcal_pwmConfig_t *pwmCfg);
 
 /********************************************************************************/
 // adc
