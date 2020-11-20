@@ -268,8 +268,8 @@ typedef enum
 
 typedef enum
 {
-    MCAL_TIMER_TIMER_MODE = (0U),
-    MCAL_TIMER_COUNTER_MODE = (1U),
+    MCAL_TIMER_NORMAL_MODE = (0U),
+    MCAL_TIMER_CTC_MODE = (1U)
 } mcal_timer_mode_t;
 
 typedef enum
@@ -421,5 +421,9 @@ void mcal_adc_conversion_start(mcal_adc_blkEnum_t *x_adcBlock, mcal_adc_chEnum_t
 uint32_t mcal_adc_conversionResult_get(mcal_adc_blkEnum_t *x_adcBlock, mcal_adc_chEnum_t x_adcCh);
 uint32_t mcal_adc_conversionStatus_get(mcal_adc_blkEnum_t *x_adcBlock, mcal_adc_chEnum_t x_adcCh);
 void mcal_adc_flag_clear(mcal_adc_blkEnum_t *x_adcBlock, mcal_adc_chEnum_t x_adcCh);
+
+/********************************************************************************/
+// systick
+#define MCAL_SYSTICK_TIMER_CHANNEL MCAL_TIMER_0
 
 #endif

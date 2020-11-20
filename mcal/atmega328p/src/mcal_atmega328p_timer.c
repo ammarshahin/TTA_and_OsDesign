@@ -181,9 +181,9 @@ static void mcal_timer_perscaller_buffer(mcal_timer_t x_timer, mcal_timer_presca
     }
 }
 
-void mcal_timer_timerInterruptState_set(mcal_timer_t px_tb, mcal_timer_intMode_t x_intState)
+void mcal_timer_timerInterruptState_set(mcal_timer_t px_timer, mcal_timer_intMode_t x_intState)
 {
-    switch (px_tb)
+    switch (px_timer)
     {
     case MCAL_TIMER_0:
         TIMSK0 = ((TIMSK0 & 0xf8) | x_intState);
@@ -199,27 +199,27 @@ void mcal_timer_timerInterruptState_set(mcal_timer_t px_tb, mcal_timer_intMode_t
     }
 }
 
-void mcal_timer_timerChannel_enable(mcal_timer_t px_tb)
+void mcal_timer_timerChannel_enable(mcal_timer_t px_timer)
 {
-    switch (px_tb)
+    switch (px_timer)
     {
     case MCAL_TIMER_0:
-        TCCR0B = ((TCCR0B & 0xf8) | gArr_timers_internalHandler[px_tb].mask);
+        TCCR0B = ((TCCR0B & 0xf8) | gArr_timers_internalHandler[px_timer].mask);
         break;
     case MCAL_TIMER_1:
         // TODO:
         break;
     case MCAL_TIMER_2:
-        TCCR2B = ((TCCR2B & 0xf8) | gArr_timers_internalHandler[px_tb].mask);
+        TCCR2B = ((TCCR2B & 0xf8) | gArr_timers_internalHandler[px_timer].mask);
         break;
     default:
         break;
     }
 }
 
-void mcal_timer_timerChannel_disble(mcal_timer_t px_tb)
+void mcal_timer_timerChannel_disble(mcal_timer_t px_timer)
 {
-    switch (px_tb)
+    switch (px_timer)
     {
     case MCAL_TIMER_0:
         TCCR0B = (TCCR0B & 0xf8);
@@ -235,9 +235,9 @@ void mcal_timer_timerChannel_disble(mcal_timer_t px_tb)
     }
 }
 
-void mcal_timer_timerCounter_reset(mcal_timer_t px_tb)
+void mcal_timer_timerCounter_reset(mcal_timer_t px_timer)
 {
-    switch (px_tb)
+    switch (px_timer)
     {
     case MCAL_TIMER_0:
         TCNT0 = 0x00;
@@ -254,10 +254,10 @@ void mcal_timer_timerCounter_reset(mcal_timer_t px_tb)
     }
 }
 
-uint16_t mcal_timer_timerCounter_get(mcal_timer_t px_tb)
+uint16_t mcal_timer_timerCounter_get(mcal_timer_t px_timer)
 {
     uint16_t ret = 0;
-    switch (px_tb)
+    switch (px_timer)
     {
     case MCAL_TIMER_0:
         ret = (uint16_t)TCNT0;
@@ -274,9 +274,9 @@ uint16_t mcal_timer_timerCounter_get(mcal_timer_t px_tb)
     return ret;
 }
 
-void mcal_timer_timerFlag_clear(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_flag)
+void mcal_timer_timerFlag_clear(mcal_timer_t px_timer, mcal_timer_intFlagEnum_t x_flag)
 {
-    switch (px_tb)
+    switch (px_timer)
     {
     case MCAL_TIMER_0:
         TIFR0 = ((TIFR0 & (~x_flag)));
@@ -292,10 +292,10 @@ void mcal_timer_timerFlag_clear(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_f
     }
 }
 
-uint8_t mcal_timer_timerFlag_get(mcal_timer_t px_tb, mcal_timer_intFlagEnum_t x_flag)
+uint8_t mcal_timer_timerFlag_get(mcal_timer_t px_timer, mcal_timer_intFlagEnum_t x_flag)
 {
     uint8_t ret = 0;
-    switch (px_tb)
+    switch (px_timer)
     {
     case MCAL_TIMER_0:
         ret = TIFR0 & x_flag;

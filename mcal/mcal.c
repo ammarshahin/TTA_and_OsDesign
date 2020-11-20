@@ -2,4 +2,5 @@
 
 void mcal_init(void)
 {
+    //
 }
