@@ -64,7 +64,7 @@ int main(void)
 
     pwmCfg.timer = MCAL_TIMER_0;
     pwmCfg.duty = 20;
-    pwmCfg.freq = 14145;
+    pwmCfg.freq = 100;
     pwmCfg.state = MCAL_PWM_START;
     mcal_pwm_init(&pwmCfg);
 
@@ -93,7 +93,7 @@ int main(void)
         //heartbeat_update(NULL);
         doutput_module_test();
         dinput_module_test();
-        //uart_mcal_test();
+        uart_mcal_test();
         pwm_test();
         _delay_ms(1);
     }
@@ -127,21 +127,31 @@ void doutput_module_test(void)
 
 void dinput_module_test(void)
 {
-    doutputModule_state_set(SWITCH_OUTPUT, dinputModule_state_get(SWITCH_INPUT));
+    //doutputModule_state_set(SWITCH_OUTPUT, dinputModule_state_get(SWITCH_INPUT));
 }
 
 void uart_mcal_test(void)
 {
+    uint8_t temp = 0;
     static uint16_t internalTimer = 0;
     internalTimer++;
-    if (internalTimer >= 500)
+    if (internalTimer >= 5000)
     {
         internalTimer = 0;
-        mcal_uart_data_put(MCAL_UART_UART0, 'f');
+        mcal_uart_data_put(MCAL_UART_UART0, 'a');
     }
-    else
+
+    if (UART_RECV_COMPLETE_FLAG_CHECK())
     {
-        //
+        UART_DATA_GET(temp);
+        if (temp == 1)
+        {
+            doutputModule_state_set(SWITCH_OUTPUT, MCAL_GPIO_HIGH);
+        }
+        else if (temp == 1)
+        {
+            doutputModule_state_set(SWITCH_OUTPUT, MCAL_GPIO_LOW);
+        }
     }
 }
 
@@ -149,10 +159,15 @@ void pwm_test(void)
 {
     static uint16_t internalTimer = 0;
     internalTimer++;
-    if (internalTimer >= 10000)
+    if (internalTimer >= 100)
     {
         internalTimer = 0;
-        // mcal_pwm_channel_disable(&pwmCfg);
+        pwmCfg.duty -= 5;
+        if (pwmCfg.duty <= 5)
+        {
+            pwmCfg.duty = 100;
+        }
+        mcal_pwm_frequencyAndDuty_set(&pwmCfg);
     }
     else
     {
