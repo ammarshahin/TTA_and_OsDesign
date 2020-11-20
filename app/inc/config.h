@@ -5,7 +5,7 @@
 #include "component_id.h"
 
 #ifndef F_OSC
-#define F_OSC 1000000UL
+#define F_OSC 16000000UL
 #endif
 
 #define APP_SYS_HEALTH (0)
@@ -26,7 +26,7 @@
 #define OS_SCHEDULER_SYSTEM_TASKS_NUM 5
 #define OS_RUN_TIME_USER_HOOKS_NUM 2
 
-#define OS_TICK_PERIOD_MS (1)
+#define OS_TICK_PERIOD_MS (1u)
 #define OS_TIMER_UPDATE_PERIOD_MS (10)
 #define WDT_UPDATE_PERIOD_MS (10)
 #define UART_UPDATE_PERIOD_MS (1)

@@ -69,7 +69,7 @@ int main(void)
     // mcal_pwm_init(&pwmCfg);
 
     mcal_sysTick_init();
-    mcal_sysTick_set(1);
+    mcal_sysTick_set(OS_TICK_PERIOD_MS);
     mcal_sysTick_start();
     // bsp_clockConfig_set();
     // bsp_interruptPriorities_set();
@@ -100,7 +100,7 @@ void doutput_module_test(void)
 {
     static uint8_t state = MCAL_GPIO_HIGH;
     static uint16_t internalTimer = 0;
-    internalTimer++;
+    internalTimer += OS_TICK_PERIOD_MS;
     if (internalTimer >= 500)
     {
         internalTimer = 0;
@@ -129,7 +129,7 @@ void uart_mcal_test(void)
 {
     uint8_t temp = 0;
     static uint16_t internalTimer = 0;
-    internalTimer++;
+    internalTimer += OS_TICK_PERIOD_MS;
     if (internalTimer >= 5000)
     {
         internalTimer = 0;
@@ -139,7 +139,7 @@ void uart_mcal_test(void)
     if (UART_RECV_COMPLETE_FLAG_CHECK())
     {
         UART_DATA_GET(temp);
-        if (temp == 1)
+        if (temp == 2)
         {
             doutputModule_state_set(SWITCH_OUTPUT, MCAL_GPIO_HIGH);
         }
@@ -153,7 +153,7 @@ void uart_mcal_test(void)
 void pwm_test(void)
 {
     static uint16_t internalTimer = 0;
-    internalTimer++;
+    internalTimer += OS_TICK_PERIOD_MS;
     if (internalTimer >= 100)
     {
         internalTimer = 0;
