@@ -18,7 +18,7 @@ void pwm_test(void);
 
 int main(void)
 {
-    //sei();
+    globalInterrupts_On();
     doutputModule_t dout;
     dout.gpio.port = HEARTBEAT_LED_PORT;
     dout.gpio.pin = HEARTBEAT_LED_PIN;
@@ -62,12 +62,15 @@ int main(void)
     uartConfig.usartEN = MCAL_UART_USART_DISABLE;
     mcal_uart_init(&uartConfig);
 
-    pwmCfg.timer = MCAL_TIMER_0;
-    pwmCfg.duty = 20;
-    pwmCfg.freq = 100;
-    pwmCfg.state = MCAL_PWM_START;
-    mcal_pwm_init(&pwmCfg);
+    // pwmCfg.timer = MCAL_TIMER_0;
+    // pwmCfg.duty = 20;
+    // pwmCfg.freq = 100;
+    // pwmCfg.state = MCAL_PWM_START;
+    // mcal_pwm_init(&pwmCfg);
 
+    mcal_sysTick_init();
+    mcal_sysTick_set(1);
+    mcal_sysTick_start();
     // bsp_clockConfig_set();
     // bsp_interruptPriorities_set();
 
@@ -88,14 +91,7 @@ int main(void)
 
     while (1)
     {
-        doutputModule_update(NULL);
-        dinputModule_update(NULL);
-        //heartbeat_update(NULL);
-        doutput_module_test();
-        dinput_module_test();
-        uart_mcal_test();
-        pwm_test();
-        _delay_ms(1);
+        //_delay_ms(1);
     }
     return 0;
 }
@@ -108,7 +104,6 @@ void doutput_module_test(void)
     if (internalTimer >= 500)
     {
         internalTimer = 0;
-        // mcal_timer_delay_ms(MCAL_TIMER_0, 500);
         if (state == MCAL_GPIO_HIGH)
         {
             state = MCAL_GPIO_LOW;
@@ -173,4 +168,15 @@ void pwm_test(void)
     {
         //
     }
+}
+
+void system_run(void)
+{
+    doutputModule_update(NULL);
+    dinputModule_update(NULL);
+    //heartbeat_update(NULL);
+    doutput_module_test();
+    dinput_module_test();
+    uart_mcal_test();
+    pwm_test();
 }

@@ -449,9 +449,3 @@ void mcal_timer_delay_ns(mcal_timer_t x_timerCh, uint16_t delay)
     }
     mcal_timer_timerChannel_disble(x_timerCh);
 }
-
-/* ISR's */
-ISR(TIMER0_OVF_vect)
-{
-    //
-}

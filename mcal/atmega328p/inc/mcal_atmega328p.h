@@ -338,6 +338,7 @@ void mcal_timer_timerModeMS_init(mcal_timer_t *px_tb, uint32_t u32_timeMS);
 void mcal_timer_eventMode_init(mcal_timer_t *px_tb, mcal_gpio_t *px_portConfig, mcal_timer_eventEdgeConfig_t x_edge);
 void mcal_timer_softWareCap(mcal_timer_t *px_tb);
 */
+#define mcal_systick_int() ISR(TIMER0_OVF_vect)
 /********************************************************************************/
 // pwm
 typedef enum
@@ -424,6 +425,20 @@ void mcal_adc_flag_clear(mcal_adc_blkEnum_t *x_adcBlock, mcal_adc_chEnum_t x_adc
 
 /********************************************************************************/
 // systick
+
+void mcal_sysTick_init(void);
+/**
+ * @function: mcal_sysTick_set
+ * @description: Function to set the interrupt to come every no of ms
+ * @param u32_tickms the no to wait for 
+ */
+void mcal_sysTick_set(uint32_t u32_tickms);
+void mcal_sysTick_start(void);
+void mcal_sysTick_stop(void);
+
 #define MCAL_SYSTICK_TIMER_CHANNEL MCAL_TIMER_0
+
+#define globalInterrupts_On() sei()
+#define globalInterrupts_Off() cli()
 
 #endif
