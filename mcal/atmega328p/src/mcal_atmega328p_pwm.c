@@ -85,37 +85,27 @@ void mcal_pwm_init(mcal_pwmConfig_t *pwmCfg)
         }
 
         break;
-
+#endif
     case MCAL_TIMER_2:
-        /* set the pin as an output */
-        x_gpio.port = MCAL_GPIO_PORTB;
+        /* set the ocr0b pin as an output */
+        x_gpio.port = MCAL_GPIO_PORTD;
         x_gpio.pin = MCAL_GPIO_PIN3;
-        x_gpio.ioState = MCAL_GPIO_OUTPUT;
-        x_gpio.pinState = MCAL_GPIO_LOW;
         mcal_gpio_pin_init(&x_gpio);
 
-        /* set the timer to work in the pwm mode */
-        BIT_SET(TCCR2A, 0);
-        BIT_SET(TCCR2A, 1);
-        BIT_CLR(TCCR2B, 3);
+        /* set the pwm mode mode{inverting/noninverting} */
+        BIT_CLR(TCCR2A, COM2B0);
+        BIT_SET(TCCR2A, COM2B1);
 
-        /* set the timer mode */
-        BIT_CLR(TCCR2A, 6);
-        BIT_SET(TCCR2A, 7);
-
-        /* set the timer prescaller/FREQ */
-        prescaller = pwmCfg->freq;
-
-        /* set the duty */
-        OCR2A = (uint8_t)(((uint16_t)pwmCfg->duty * TIMER2_MAX_COUNT) / 100);
+        /* set the Freq and duty */
+        mcal_pwm_frequencyAndDuty_set(pwmCfg);
 
         if (pwmCfg->state == MCAL_PWM_START)
         {
-            mcal_pwm_channel_enable(gArr_pwm_internal_handler.gu8_pwm_internal_counter);
+            mcal_pwm_channel_enable(pwmCfg);
         }
 
         break;
-#endif
+
     default:
         break;
     }
@@ -127,7 +117,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
 
     switch (pwmCfg->timer)
     {
-    case MCAL_PWM_0:
+    case MCAL_TIMER_0:
 
         prescaller = F_CPU / (pwmCfg->freq * (TIMER0_MAX_COUNT + 1));
 
@@ -210,6 +200,109 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
 
         /* set the duty */
         OCR0B = (uint8_t)(((uint16_t)pwmCfg->duty * OCR0A) / 100UL);
+
+#if DEBUG
+        utils_itoa(OCR0B, buff);
+        mcal_uart_string_put(MCAL_UART_UART0, buff);
+        mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
+#endif
+
+        pwmCfg->freq = (uint32_t)prescaller;
+        break;
+
+        // FIXME: add MCAL_TIMER_1
+
+    case MCAL_TIMER_2:
+
+        prescaller = F_CPU / (pwmCfg->freq * (TIMER2_MAX_COUNT + 1));
+
+        if (prescaller < 1)
+        {
+            prescaller = 1;
+        }
+        else if (prescaller < 8)
+        {
+            prescaller = 8;
+        }
+        else if (prescaller < 32)
+        {
+            prescaller = 32;
+        }
+        else if (prescaller < 64)
+        {
+            prescaller = 64;
+        }
+        else if (prescaller < 128)
+        {
+            prescaller = 128;
+        }
+        else if (prescaller < 256)
+        {
+            prescaller = 256;
+        }
+        else if (prescaller < 1024)
+        {
+            prescaller = 1024;
+        }
+        else
+        {
+            if ((pwmCfg->freq < 62) && (pwmCfg->freq > 31))
+            {
+                /* set the timer to work in the phase correct pwm mode */
+                BIT_SET(TCCR2A, 0);
+                BIT_CLR(TCCR2A, 1);
+                BIT_SET(TCCR2B, 3);
+
+                prescaller = 1024;
+
+                OCR2A = (uint8_t)((F_CPU / (2 * pwmCfg->freq * prescaller)) - 1);
+
+#if DEBUG
+                utils_itoa(OCR0A, buff);
+                mcal_uart_string_put(MCAL_UART_UART0, buff);
+                mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
+#endif
+
+                /* set the duty */
+                OCR2B = (uint8_t)(((uint16_t)pwmCfg->duty * OCR2A) / 100UL);
+
+#if DEBUG
+                utils_itoa(OCR0B, buff);
+                mcal_uart_string_put(MCAL_UART_UART0, buff);
+                mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
+#endif
+                pwmCfg->freq = (uint32_t)prescaller;
+                break;
+            }
+            else
+            {
+                // Error >> Use Software PWM
+                pwmCfg->freq = 0;
+                break;
+            }
+        }
+
+        /* set the timer to work in the fast pwm mode */
+        BIT_SET(TCCR2A, 0);
+        BIT_SET(TCCR2A, 1);
+        BIT_SET(TCCR2B, 3);
+
+#if DEBUG
+        utils_itoa(prescaller, buff);
+        mcal_uart_string_put(MCAL_UART_UART0, buff);
+        mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
+#endif
+
+        OCR2A = (uint8_t)((F_CPU / (pwmCfg->freq * prescaller)) - 1);
+
+#if DEBUG
+        utils_itoa(OCR0A, buff);
+        mcal_uart_string_put(MCAL_UART_UART0, buff);
+        mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
+#endif
+
+        /* set the duty */
+        OCR2B = (uint8_t)(((uint16_t)pwmCfg->duty * OCR2A) / 100UL);
 
 #if DEBUG
         utils_itoa(OCR0B, buff);

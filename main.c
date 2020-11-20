@@ -62,11 +62,11 @@ int main(void)
     uartConfig.usartEN = MCAL_UART_USART_DISABLE;
     mcal_uart_init(&uartConfig);
 
-    // pwmCfg.timer = MCAL_TIMER_0;
-    // pwmCfg.duty = 20;
-    // pwmCfg.freq = 100;
-    // pwmCfg.state = MCAL_PWM_START;
-    // mcal_pwm_init(&pwmCfg);
+    pwmCfg.timer = MCAL_TIMER_2;
+    pwmCfg.duty = 100;
+    pwmCfg.freq = 70;
+    pwmCfg.state = MCAL_PWM_START;
+    mcal_pwm_init(&pwmCfg);
 
     mcal_sysTick_init();
     mcal_sysTick_set(OS_TICK_PERIOD_MS);
@@ -94,6 +94,17 @@ int main(void)
         //_delay_ms(1);
     }
     return 0;
+}
+
+void system_run(void)
+{
+    doutputModule_update(NULL);
+    dinputModule_update(NULL);
+    //heartbeat_update(NULL);
+    doutput_module_test();
+    dinput_module_test();
+    uart_mcal_test();
+    pwm_test();
 }
 
 void doutput_module_test(void)
@@ -158,7 +169,7 @@ void pwm_test(void)
     {
         internalTimer = 0;
         pwmCfg.duty -= 5;
-        if (pwmCfg.duty <= 5)
+        if (pwmCfg.duty < 5)
         {
             pwmCfg.duty = 100;
         }
@@ -168,15 +179,4 @@ void pwm_test(void)
     {
         //
     }
-}
-
-void system_run(void)
-{
-    doutputModule_update(NULL);
-    dinputModule_update(NULL);
-    //heartbeat_update(NULL);
-    doutput_module_test();
-    dinput_module_test();
-    uart_mcal_test();
-    pwm_test();
 }
