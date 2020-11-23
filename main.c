@@ -16,6 +16,17 @@ void dinput_module_test(void);
 void uart_mcal_test(void);
 void pwm_test(void);
 
+void system_run(void)
+{
+    doutputModule_update(NULL);
+    dinputModule_update(NULL);
+    //heartbeat_update(NULL);
+    doutput_module_test();
+    dinput_module_test();
+    uart_mcal_test();
+    pwm_test();
+}
+
 int main(void)
 {
     globalInterrupts_On();
@@ -71,6 +82,7 @@ int main(void)
     mcal_sysTick_init();
     mcal_sysTick_set(OS_TICK_PERIOD_MS);
     mcal_sysTick_start();
+
     // bsp_clockConfig_set();
     // bsp_interruptPriorities_set();
 
@@ -91,20 +103,9 @@ int main(void)
 
     while (1)
     {
-        //_delay_ms(1);
+        // Empty while loop
     }
     return 0;
-}
-
-void system_run(void)
-{
-    doutputModule_update(NULL);
-    dinputModule_update(NULL);
-    //heartbeat_update(NULL);
-    doutput_module_test();
-    dinput_module_test();
-    uart_mcal_test();
-    pwm_test();
 }
 
 void doutput_module_test(void)

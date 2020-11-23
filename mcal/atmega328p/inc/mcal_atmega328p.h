@@ -338,7 +338,8 @@ void mcal_timer_timerModeMS_init(mcal_timer_t *px_tb, uint32_t u32_timeMS);
 void mcal_timer_eventMode_init(mcal_timer_t *px_tb, mcal_gpio_t *px_portConfig, mcal_timer_eventEdgeConfig_t x_edge);
 void mcal_timer_softWareCap(mcal_timer_t *px_tb);
 */
-#define mcal_systick_int() ISR(TIMER0_OVF_vect)
+#define mcal_systick_overflow_int() ISR(TIMER0_OVF_vect)
+#define mcal_systick_compareA_int() ISR(TIMER0_COMPA_vect)
 /********************************************************************************/
 // pwm
 typedef enum
