@@ -10,9 +10,9 @@
 #include "def.h"
 #include "avr/io.h"
 #include "avr/interrupt.h"
-#include "util/delay.h"
+//#include "util/delay.h"
 //#include "util/twi.h"
-//#include "avr/wdt.h"
+#include "avr/wdt.h"
 //#include "avr/common.h"
 
 typedef volatile uint8_t *const reg_type;
@@ -436,10 +436,51 @@ void mcal_sysTick_init(void);
 void mcal_sysTick_set(uint32_t u32_tickms);
 void mcal_sysTick_start(void);
 void mcal_sysTick_stop(void);
+uint8_t mcal_sysTick_flag_get(void);
 
 #define MCAL_SYSTICK_TIMER_CHANNEL MCAL_TIMER_0
 
 #define globalInterrupts_On() sei()
 #define globalInterrupts_Off() cli()
+
+/***************************************************************/
+// WDT
+// NOTE: the wdt should be disabled on startup so it wont reset until the system is fully up. then enable the wdt and assign a task that feeds the wdt regularly
+#define WDT_CTRL_REG (WDTCSR)
+
+// NOTE: due to it being extended to an asm version there can't be preceeding spaces in the #define
+#define WDT_FEED() wdt_reset()
+
+#define WDT_ENABLE()                  \
+    do                                \
+    {                                 \
+        globalInterrupts_Off();       \
+        BIT_SET(MCU_STATE_REG, WDRF); \
+        BIT_SET(WDT_CTRL_REG, WDE);   \
+        BIT_CLR(WDT_CTRL_REG, 0);     \
+        BIT_CLR(WDT_CTRL_REG, 1);     \
+        BIT_CLR(WDT_CTRL_REG, 2);     \
+        BIT_SET(WDT_CTRL_REG, 5);     \
+        globalInterrupts_On();        \
+    } while (0)
+
+// BIT_SET(MCU_STATE_REG, WDRF);
+// BIT_SET(WDT_CTRL_REG, WDE);
+#define WDT_DISABLE() (wdt_disable())
+// NOTE: it is a must to clear the wdt flag after a reset due to wdt reset
+#define WDT_FLAG_CLEAR() (MCUCSR &= ~(1 << 3))
+
+/***************************************************************/
+// SYSTEM
+#define MCU_STATE_REG (MCUSR)
+#define MCU_STATE_REG_GET() (MCUCSR)
+#define MCU_STATE_REG_CLEAR() (MCUCSR = 0)
+
+#define SYS_INIT()        \
+    do                    \
+    {                     \
+        WDT_FLAG_CLEAR(); \
+        WDT_DISABLE();    \
+    } while (0)
 
 #endif

@@ -12,9 +12,9 @@
 #include "mcal.h"
 #include "utils.h"
 
-#define DEBUG 0
+#define debug 0
 
-#if DEBUG
+#if debug
 uint8_t buff[10] = {0};
 #endif
 
@@ -154,7 +154,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
 
                 OCR0A = (uint8_t)((F_CPU / (2 * pwmCfg->freq * prescaller)) - 1);
 
-#if DEBUG
+#if debug
                 utils_itoa(OCR0A, buff);
                 mcal_uart_string_put(MCAL_UART_UART0, buff);
                 mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
@@ -163,7 +163,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
                 /* set the duty */
                 OCR0B = (uint8_t)(((uint16_t)pwmCfg->duty * OCR0A) / 100UL);
 
-#if DEBUG
+#if debug
                 utils_itoa(OCR0B, buff);
                 mcal_uart_string_put(MCAL_UART_UART0, buff);
                 mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
@@ -184,7 +184,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
         BIT_SET(TCCR0A, 1);
         BIT_SET(TCCR0B, 3);
 
-#if DEBUG
+#if debug
         utils_itoa(prescaller, buff);
         mcal_uart_string_put(MCAL_UART_UART0, buff);
         mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
@@ -192,7 +192,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
 
         OCR0A = (uint8_t)((F_CPU / (pwmCfg->freq * prescaller)) - 1);
 
-#if DEBUG
+#if debug
         utils_itoa(OCR0A, buff);
         mcal_uart_string_put(MCAL_UART_UART0, buff);
         mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
@@ -201,7 +201,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
         /* set the duty */
         OCR0B = (uint8_t)(((uint16_t)pwmCfg->duty * OCR0A) / 100UL);
 
-#if DEBUG
+#if debug
         utils_itoa(OCR0B, buff);
         mcal_uart_string_put(MCAL_UART_UART0, buff);
         mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
@@ -257,7 +257,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
 
                 OCR2A = (uint8_t)((F_CPU / (2 * pwmCfg->freq * prescaller)) - 1);
 
-#if DEBUG
+#if debug
                 utils_itoa(OCR0A, buff);
                 mcal_uart_string_put(MCAL_UART_UART0, buff);
                 mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
@@ -266,7 +266,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
                 /* set the duty */
                 OCR2B = (uint8_t)(((uint16_t)pwmCfg->duty * OCR2A) / 100UL);
 
-#if DEBUG
+#if debug
                 utils_itoa(OCR0B, buff);
                 mcal_uart_string_put(MCAL_UART_UART0, buff);
                 mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
@@ -287,7 +287,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
         BIT_SET(TCCR2A, 1);
         BIT_SET(TCCR2B, 3);
 
-#if DEBUG
+#if debug
         utils_itoa(prescaller, buff);
         mcal_uart_string_put(MCAL_UART_UART0, buff);
         mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
@@ -295,7 +295,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
 
         OCR2A = (uint8_t)((F_CPU / (pwmCfg->freq * prescaller)) - 1);
 
-#if DEBUG
+#if debug
         utils_itoa(OCR0A, buff);
         mcal_uart_string_put(MCAL_UART_UART0, buff);
         mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
@@ -304,7 +304,7 @@ void mcal_pwm_frequencyAndDuty_set(mcal_pwmConfig_t *pwmCfg)
         /* set the duty */
         OCR2B = (uint8_t)(((uint16_t)pwmCfg->duty * OCR2A) / 100UL);
 
-#if DEBUG
+#if debug
         utils_itoa(OCR0B, buff);
         mcal_uart_string_put(MCAL_UART_UART0, buff);
         mcal_uart_string_put(MCAL_UART_UART0, (uint8_t *)"\n");
