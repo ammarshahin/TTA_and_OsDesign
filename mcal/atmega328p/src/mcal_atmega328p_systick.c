@@ -119,8 +119,10 @@ mcal_systick_compareA_int()
 
 uint8_t mcal_sysTick_flag_get(void)
 {
-    uint8_t ret;
-    ret = gu8_systick_flag;
+    return gu8_systick_flag;
+}
+
+void mcal_sysTick_flag_clear(void)
+{
     gu8_systick_flag = 0;
-    return ret;
 }

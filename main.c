@@ -18,18 +18,17 @@ void pwm_test(void);
 
 void system_run(void)
 {
-    doutputModule_update(NULL);
-    dinputModule_update(NULL);
-    //heartbeat_update(NULL);
     doutput_module_test();
     dinput_module_test();
     uart_mcal_test();
     pwm_test();
+    doutputModule_update(NULL);
+    dinputModule_update(NULL);
+    //heartbeat_update(NULL);
 }
 
 int main(void)
 {
-    globalInterrupts_On();
     doutputModule_t dout;
     dout.gpio.port = HEARTBEAT_LED_PORT;
     dout.gpio.pin = HEARTBEAT_LED_PIN;
@@ -101,19 +100,28 @@ int main(void)
 
     //     os_scheduler_start();
 
+    WDT_ENABLE();
+    globalInterrupts_On();
+
+    //BIT_SET(DDRC, 0);
     while (1)
     {
-        // Empty while loop
+        if (mcal_sysTick_flag_get())
+        {
+            mcal_sysTick_flag_clear();
+            system_run();
+        }
+        WDT_FEED();
     }
     return 0;
 }
 
 void doutput_module_test(void)
 {
-    static uint8_t state = MCAL_GPIO_HIGH;
-    static uint16_t internalTimer = 0;
+    static volatile uint8_t state = MCAL_GPIO_HIGH;
+    static volatile uint16_t internalTimer = 0;
     internalTimer += OS_TICK_PERIOD_MS;
-    if (internalTimer >= 500)
+    if (internalTimer == 500)
     {
         internalTimer = 0;
         if (state == MCAL_GPIO_HIGH)
@@ -142,7 +150,7 @@ void uart_mcal_test(void)
     uint8_t temp = 0;
     static uint16_t internalTimer = 0;
     internalTimer += OS_TICK_PERIOD_MS;
-    if (internalTimer >= 5000)
+    if (internalTimer == 5000)
     {
         internalTimer = 0;
         mcal_uart_data_put(MCAL_UART_UART0, 'a');
@@ -166,7 +174,7 @@ void pwm_test(void)
 {
     static uint16_t internalTimer = 0;
     internalTimer += OS_TICK_PERIOD_MS;
-    if (internalTimer >= 100)
+    if (internalTimer == 100)
     {
         internalTimer = 0;
         pwmCfg.duty -= 5;
@@ -181,3 +189,9 @@ void pwm_test(void)
         //
     }
 }
+
+// ISR(WDT_vect)
+// {
+//     BIT_TOG(PORTC, 1);
+//     WDT_FEED();
+// }

@@ -437,6 +437,7 @@ void mcal_sysTick_set(uint32_t u32_tickms);
 void mcal_sysTick_start(void);
 void mcal_sysTick_stop(void);
 uint8_t mcal_sysTick_flag_get(void);
+void mcal_sysTick_flag_clear(void);
 
 #define MCAL_SYSTICK_TIMER_CHANNEL MCAL_TIMER_0
 
