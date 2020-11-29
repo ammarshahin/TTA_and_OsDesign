@@ -89,6 +89,8 @@ void mcal_gpio_altFunction_set(mcal_gpio_t *px_gpio, mcal_gpio_alternateFnEnum_t
 
 /********************************************************************************/
 // uart
+#define MAX_UART_BUFFER_SIZE (10u)
+#define mcal_uart_interrupt() ISR(USART_RX_vect)
 
 /* CORE */
 #define UART_DATA_REG (UDR0)
@@ -247,6 +249,7 @@ void mcal_uart_data_put(mcal_uart_t x_uart, uint8_t u8_data);
 uint8_t mcal_uart_data_get(mcal_uart_t x_uart);
 void mcal_uart_string_put(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
+uint8_t mcal_uart_data_receivedFlag_get(mcal_uart_t x_uart);
 
 /********************************************************************************/
 // timer

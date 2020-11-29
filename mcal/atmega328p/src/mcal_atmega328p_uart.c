@@ -12,6 +12,16 @@
 #include "utils.h"
 #include "mcal_atmega328p.h"
 
+typedef struct
+{
+    uint8_t internalBuffer[MAX_UART_BUFFER_SIZE];
+    uint8_t receive_index;
+    uint8_t read_index;
+    uint8_t data_ready_flag;
+} internal_buffer_t;
+
+volatile static internal_buffer_t gx_internalBuffer;
+
 /**
  * @function: mcal_uart_init
  * 
@@ -21,6 +31,15 @@
  */
 void mcal_uart_init(mcal_uartConfig_t *uartCFG)
 {
+    uint8_t u8_index = 0;
+    for (u8_index = 0; u8_index < MAX_UART_BUFFER_SIZE; u8_index++)
+    {
+        gx_internalBuffer.internalBuffer[u8_index] = 0;
+    }
+    gx_internalBuffer.read_index = 0;
+    gx_internalBuffer.receive_index = 0;
+    gx_internalBuffer.data_ready_flag = 0;
+
     /* init all of the regestirs */
     UART_REG_INIT();
 
@@ -60,15 +79,15 @@ void mcal_uart_init(mcal_uartConfig_t *uartCFG)
 }
 
 /**
- * @funcion: mcal_uart_data_put 
- * @brief This function is used send data through the uart
+ * @function: mcal_uart_data_receivedFlag
+ * @brief this function is used to get the recivied flag. 
  * 
  * @param x_uart the uart channel
- * @param u8_data the data to be sent
+ * @return uint8_t the data received flag
  */
-void mcal_uart_data_put(mcal_uart_t x_uart, uint8_t u8_data)
+uint8_t mcal_uart_data_receivedFlag_get(mcal_uart_t x_uart)
 {
-    UART_DATA_SET(u8_data);
+    return gx_internalBuffer.data_ready_flag;
 }
 
 /**
@@ -81,8 +100,44 @@ void mcal_uart_data_put(mcal_uart_t x_uart, uint8_t u8_data)
 uint8_t mcal_uart_data_get(mcal_uart_t x_uart)
 {
     uint8_t u8_data;
-    UART_DATA_GET(u8_data);
+
+    u8_data = gx_internalBuffer.internalBuffer[gx_internalBuffer.read_index];
+    gx_internalBuffer.read_index++;
+    if (gx_internalBuffer.read_index >= gx_internalBuffer.receive_index)
+    {
+        gx_internalBuffer.read_index = 0;
+        gx_internalBuffer.receive_index = 0;
+        gx_internalBuffer.data_ready_flag = 0;
+    }
     return u8_data;
+}
+
+/**
+ * @brief 
+ * 
+ * @param x_uart 
+ * @param pu8_ptr 
+ */
+void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr)
+{
+    uint8_t u8_index = 0;
+    do
+    {
+        pu8_ptr[u8_index] = mcal_uart_data_get(x_uart);
+    } while (pu8_ptr[u8_index++] != '*');
+    pu8_ptr[u8_index - 1] = '\0';
+}
+
+/**
+ * @funcion: mcal_uart_data_put 
+ * @brief This function is used send data through the uart
+ * 
+ * @param x_uart the uart channel
+ * @param u8_data the data to be sent
+ */
+void mcal_uart_data_put(mcal_uart_t x_uart, uint8_t u8_data)
+{
+    UART_DATA_SET(u8_data);
 }
 
 /**
@@ -101,18 +156,15 @@ void mcal_uart_string_put(mcal_uart_t x_uart, uint8_t *pu8_ptr)
     }
 }
 
-/**
- * @brief 
- * 
- * @param x_uart 
- * @param pu8_ptr 
- */
-void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr)
+mcal_uart_interrupt()
 {
-    uint8_t u8_index = 0;
-    do
+    UART_DATA_GET(gx_internalBuffer.internalBuffer[gx_internalBuffer.receive_index]);
+    gx_internalBuffer.receive_index++;
+    if (gx_internalBuffer.receive_index == MAX_UART_BUFFER_SIZE)
     {
-        pu8_ptr[u8_index] = mcal_uart_data_get(x_uart);
-    } while (pu8_ptr[u8_index++] != '*');
-    pu8_ptr[u8_index - 1] = '\0';
+        // REPORT ERROR
+        gx_internalBuffer.receive_index = 0;
+        gx_internalBuffer.read_index = 0;
+    }
+    gx_internalBuffer.data_ready_flag = 0xff;
 }

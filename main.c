@@ -53,19 +53,11 @@ int main(void)
     din.longPressMultiplier = 1000;
     dinputModule_init(&din);
 
-    /*
-    mcal_timer_CFG_t x_timer;
-    x_timer.channel_num = MCAL_TIMER_0;
-    x_timer.timer_intMode = MCAL_TIMER_INT_DISABLE;
-    x_timer.timer_prescaller = NO_PRESCALLER;
-    x_timer.timerState = MCAL_TIMER_STOP;
-    mcal_timer_init(&x_timer);
-*/
     mcal_uartConfig_t uartConfig;
     uartConfig.uart_channel = MCAL_UART_UART0;
     uartConfig.baudRate = 9600;
     uartConfig.dataBits = MCAL_UART_DATA_BITS_8;
-    uartConfig.interruptEN = MCAL_UART_INTERRUPT_NONE;
+    uartConfig.interruptEN = MCAL_UART_INTERRUPT_RX;
     uartConfig.mode = MCAL_UART_MODE_TX | MCAL_UART_MODE_RX;
     uartConfig.parity = MCAL_UART_PARITY_NO;
     uartConfig.stopBits = MCAL_UART_STOP_BITS_1;
@@ -156,14 +148,14 @@ void uart_mcal_test(void)
         mcal_uart_data_put(MCAL_UART_UART0, 'a');
     }
 
-    if (UART_RECV_COMPLETE_FLAG_CHECK())
+    while (mcal_uart_data_receivedFlag_get(MCAL_UART_UART0))
     {
-        UART_DATA_GET(temp);
-        if (temp == 2)
+        temp = mcal_uart_data_get(MCAL_UART_UART0);
+        if (temp == 1)
         {
             doutputModule_state_set(SWITCH_OUTPUT, MCAL_GPIO_HIGH);
         }
-        else if (temp == 1)
+        else
         {
             doutputModule_state_set(SWITCH_OUTPUT, MCAL_GPIO_LOW);
         }
