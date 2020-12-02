@@ -72,6 +72,7 @@ C_SRCS +=  \
 app/app.c \
 app/app_startup.c \
 app/bsp.c \
+app/normal_mode/app_debug.c \
 component/doutput_module/doutput_module.c \
 component/dinput_module/dinput_module.c \
 component/heartbeat/heartbeat.c \
@@ -82,7 +83,9 @@ mcal/atmega328p/src/mcal_atmega328p_timer.c \
 mcal/atmega328p/src/mcal_atmega328p_uart.c \
 mcal/atmega328p/src/mcal_atmega328p_systick.c \
 mcal/atmega328p/src/mcal_atmega328p_pwm.c \
+mcal/atmega328p/src/mcal_atmega328p_wdt.c \
 mcal/mcal.c \
+os/src/os.c \
 utils/utils.c
 
 
@@ -96,6 +99,7 @@ OBJS +=  \
 app/app.o \
 app/app_startup.o \
 app/bsp.o \
+app/normal_mode/app_debug.o \
 component/doutput_module/doutput_module.o \
 component/dinput_module/dinput_module.o \
 component/heartbeat/heartbeat.o \
@@ -106,13 +110,16 @@ mcal/atmega328p/src/mcal_atmega328p_timer.o \
 mcal/atmega328p/src/mcal_atmega328p_uart.o \
 mcal/atmega328p/src/mcal_atmega328p_systick.o \
 mcal/atmega328p/src/mcal_atmega328p_pwm.o \
+mcal/atmega328p/src/mcal_atmega328p_wdt.o \
 mcal/mcal.o \
+os/src/os.o \
 utils/utils.o
 
 OBJS_AS_ARGS +=  \
 app/app.o \
 app/app_startup.o \
 app/bsp.o \
+app/normal_mode/app_debug.o \
 component/doutput_module/doutput_module.o \
 component/dinput_module/dinput_module.o \
 component/heartbeat/heartbeat.o \
@@ -123,13 +130,16 @@ mcal/atmega328p/src/mcal_atmega328p_timer.o \
 mcal/atmega328p/src/mcal_atmega328p_uart.o \
 mcal/atmega328p/src/mcal_atmega328p_systick.o \
 mcal/atmega328p/src/mcal_atmega328p_pwm.o \
+mcal/atmega328p/src/mcal_atmega328p_wdt.o \
 mcal/mcal.o \
+os/src/os.o \
 utils/utils.o
 
 C_DEPS +=  \
 app/app.d \
 app/app_startup.d \
 app/bsp.d \
+app/normal_mode/app_debug.d \
 component/doutput_module/doutput_module.d \
 component/dinput_module/dinput_module.d \
 component/heartbeat/heartbeat.d \
@@ -140,13 +150,16 @@ mcal/atmega328p/src/mcal_atmega328p_timer.d \
 mcal/atmega328p/src/mcal_atmega328p_uart.d \
 mcal/atmega328p/src/mcal_atmega328p_systick.d \
 mcal/atmega328p/src/mcal_atmega328p_pwm.d \
+mcal/atmega328p/src/mcal_atmega328p_wdt.d \
 mcal/mcal.d \
+os/src/os.d \
 utils/utils.d
 
 C_DEPS_AS_ARGS +=  \
 app/app.d \
 app/app_startup.d \
 app/bsp.d \
+app/normal_mode/app_debug.d \
 component/doutput_module/doutput_module.d \
 component/dinput_module/dinput_module.d \
 component/heartbeat/heartbeat.d \
@@ -157,7 +170,9 @@ mcal/atmega328p/src/mcal_atmega328p_timer.d \
 mcal/atmega328p/src/mcal_atmega328p_uart.d \
 mcal/atmega328p/src/mcal_atmega328p_systick.d \
 mcal/atmega328p/src/mcal_atmega328p_pwm.d \
+mcal/atmega328p/src/mcal_atmega328p_wdt.d \
 mcal/mcal.d \
+os/src/os.d \
 utils/utils.d
 
 OUTPUT_FILE_PATH +=GccApplication1.elf
@@ -191,7 +206,9 @@ app/bsp.o: app/bsp.c
 	@echo Building file: $<
 	@$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  $(CCFLAGS) -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	
-	
+app/normal_mode/app_debug.o: app/normal_mode/app_debug.c
+	@echo Building file: $<
+	@$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  $(CCFLAGS) -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 
 component/doutput_module/doutput_module.o: component/doutput_module/doutput_module.c
 	@echo Building file: $<
@@ -246,6 +263,10 @@ mcal/atmega328p/src/mcal_atmega328p_pwm.o: mcal/atmega328p/src/mcal_atmega328p_p
 	@echo Building file: $<
 	@$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  $(CCFLAGS) -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	
+mcal/atmega328p/src/mcal_atmega328p_wdt.o: mcal/atmega328p/src/mcal_atmega328p_wdt.c
+	@echo Building file: $<
+	@$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  $(CCFLAGS) -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	
 	
 
 mcal/mcal.o: mcal/mcal.c
@@ -259,6 +280,9 @@ utils/utils.o: utils/utils.c
 	@$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  $(CCFLAGS) -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	
 	
+os/src/os.o: os/src/os.c
+	@echo Building file: $<
+	@$(QUOTE)D:\Programs\Work programs\atmel\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\include" -I"app/inc" -I"app/normal_mode" -I"app/output" -I"app/input" -I"component/ainput_module" -I"component/buzzer" -I"component/doutput_module" -I"component/heartbeat" -I"driver/gpio" -I"mcal/atmega328p/inc" -I"utils" -I"os" -I"os/inc" -I"mcal" -I"driver/hw_timer" -I"driver/adc" -I"driver/stwi" -I"driver/timer_sandwich" -I"driver/uart" -I"driver/wdt" -I"component/foutput_module" -I"component/finput_module" -I"component/twi_eeprom" -I"component/rtc"  $(CCFLAGS) -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "D:\Programs\Work programs\atmel\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 
 
 

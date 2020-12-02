@@ -474,6 +474,10 @@ void mcal_sysTick_flag_clear(void);
 // NOTE: it is a must to clear the wdt flag after a reset due to wdt reset
 #define WDT_FLAG_CLEAR() (MCUCSR &= ~(1 << 3))
 
+void mcal_wdt_init(void);
+void mcal_wdt_set(uint32_t resetTime);
+void mcal_wdt_feed(void);
+void mcal_wdt_disable(void);
 /***************************************************************/
 // SYSTEM
 #define MCU_STATE_REG (MCUSR)
