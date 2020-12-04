@@ -24,10 +24,10 @@
 
 mcal_pwmConfig_t pwmCfg;
 
-void doutput_module_test(void);
-void dinput_module_test(void);
-void uart_mcal_test(void);
-void pwm_test(void);
+void doutput_module_test(void *args);
+void dinput_module_test(void *args);
+void uart_mcal_test(void *args);
+void pwm_test(void *args);
 
 void debug_init(void)
 {
@@ -71,46 +71,37 @@ void debug_init(void)
     pwmCfg.freq = 70;
     pwmCfg.state = MCAL_PWM_START;
     mcal_pwm_init(&pwmCfg);
+
+    os_scheduler_task_add(doutput_module_test, NULL, 0, 500);
+    os_scheduler_task_add(dinput_module_test, NULL, 0, 1);
+    os_scheduler_task_add(pwm_test, NULL, 0, 1);
 }
 
 void debug_update(void *args)
 {
-    doutput_module_test();
-    dinput_module_test();
-    uart_mcal_test();
-    pwm_test();
+    //
 }
 
-void doutput_module_test(void)
+void doutput_module_test(void *args)
 {
     static volatile uint8_t state = MCAL_GPIO_HIGH;
-    static volatile uint16_t internalTimer = 0;
-    internalTimer += OS_TICK_PERIOD_MS;
-    if (internalTimer == 500)
+    if (state == MCAL_GPIO_HIGH)
     {
-        internalTimer = 0;
-        if (state == MCAL_GPIO_HIGH)
-        {
-            state = MCAL_GPIO_LOW;
-        }
-        else
-        {
-            state = MCAL_GPIO_HIGH;
-        }
-        doutputModule_state_set(HEARTBIT_OUTPUT, state);
+        state = MCAL_GPIO_LOW;
     }
     else
     {
-        // Do nothing
+        state = MCAL_GPIO_HIGH;
     }
+    doutputModule_state_set(HEARTBIT_OUTPUT, state);
 }
 
-void dinput_module_test(void)
+void dinput_module_test(void *args)
 {
     doutputModule_state_set(SWITCH_OUTPUT, dinputModule_state_get(SWITCH_INPUT));
 }
 
-void uart_mcal_test(void)
+void uart_mcal_test(void *args)
 {
     uint8_t temp = 0;
     static uint16_t internalTimer = 0;
@@ -135,22 +126,12 @@ void uart_mcal_test(void)
     }
 }
 
-void pwm_test(void)
+void pwm_test(void *args)
 {
-    static uint16_t internalTimer = 0;
-    internalTimer += OS_TICK_PERIOD_MS;
-    if (internalTimer == 100)
+    pwmCfg.duty -= 5;
+    if (pwmCfg.duty < 5)
     {
-        internalTimer = 0;
-        pwmCfg.duty -= 5;
-        if (pwmCfg.duty < 5)
-        {
-            pwmCfg.duty = 100;
-        }
-        mcal_pwm_frequencyAndDuty_set(&pwmCfg);
+        pwmCfg.duty = 100;
     }
-    else
-    {
-        //
-    }
+    mcal_pwm_frequencyAndDuty_set(&pwmCfg);
 }
