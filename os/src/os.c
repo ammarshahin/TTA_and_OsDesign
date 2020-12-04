@@ -17,12 +17,10 @@
 /* Scheduler Data structure */
 typedef struct
 {
-    uint32_t delay_ms;
-    uint32_t periodicity_ms;
-    uint32_t internal_tick;
+    uint16_t delay_ms;
+    uint16_t periodicity_ms;
     p_fn_t function;
     void *args;
-    uint8_t id;
 } os_task_t;
 
 static volatile os_task_t gArr_TaskHandler[OS_SCHEDULER_TOTAL_TASK_NUMBER];
@@ -38,10 +36,8 @@ void os_scheduler_init(void)
     {
         gArr_TaskHandler[u8_index].delay_ms = 0;
         gArr_TaskHandler[u8_index].periodicity_ms = 0;
-        gArr_TaskHandler[u8_index].internal_tick = 0;
         gArr_TaskHandler[u8_index].function = NULL;
         gArr_TaskHandler[u8_index].args = NULL;
-        gArr_TaskHandler[u8_index].id = 0;
     }
     gu8_internalTaskCounter = 0;
 
@@ -76,7 +72,7 @@ void os_scheduler_start(void)
  * @param periodicity_ms The rate of the task execution [0 for One shoot task]
  * @return int8_t The state of the function {0 for success and -1 for fail}
  */
-int8_t os_scheduler_task_add(p_fn_t function, void *args, uint32_t delay_ms, uint32_t periodicity_ms)
+int8_t os_scheduler_task_add(p_fn_t function, void *args, uint16_t delay_ms, uint16_t periodicity_ms)
 {
     int8_t s8_error_state = -1;
     if ((function != NULL) && (gu8_internalTaskCounter < OS_SCHEDULER_TOTAL_TASK_NUMBER))
@@ -85,8 +81,6 @@ int8_t os_scheduler_task_add(p_fn_t function, void *args, uint32_t delay_ms, uin
         gArr_TaskHandler[gu8_internalTaskCounter].periodicity_ms = periodicity_ms;
         gArr_TaskHandler[gu8_internalTaskCounter].args = args;
         gArr_TaskHandler[gu8_internalTaskCounter].delay_ms = delay_ms;
-        gArr_TaskHandler[gu8_internalTaskCounter].id = gu8_internalTaskCounter;
-        gArr_TaskHandler[gu8_internalTaskCounter].internal_tick = 0;
         gu8_internalTaskCounter++;
         s8_error_state = 0;
     }
@@ -113,41 +107,53 @@ static void os_scheduler_runTasks(void)
             if (gArr_TaskHandler[u8_index].function != NULL)
             {
                 gArr_TaskHandler[u8_index].function(gArr_TaskHandler[u8_index].args);
-                os_scheduler_task_remove(gArr_TaskHandler[u8_index].id);
+                os_scheduler_task_remove(gArr_TaskHandler[u8_index].function);
+            }
+            else
+            {
+                // Error!!
             }
         }
         else
         {
-            gArr_TaskHandler[u8_index].internal_tick++;
-            if (gArr_TaskHandler[u8_index].internal_tick == gArr_TaskHandler[u8_index].periodicity_ms)
+            if (gArr_TaskHandler[u8_index].function != NULL)
             {
-                gArr_TaskHandler[u8_index].internal_tick = 0;
-                if (gArr_TaskHandler[u8_index].function != NULL)
-                {
-                    gArr_TaskHandler[u8_index].function(gArr_TaskHandler[u8_index].args);
-                }
-                else
-                {
-                    // Error!!
-                }
+                gArr_TaskHandler[u8_index].function(gArr_TaskHandler[u8_index].args);
+                gArr_TaskHandler[u8_index].delay_ms = gArr_TaskHandler[u8_index].periodicity_ms - 1;
+            }
+            else
+            {
+                // Error!!
             }
         }
     }
 }
 
 /* Scheduler Deinit a task (remove a task) */
-void os_scheduler_task_remove(uint8_t task_id)
+void os_scheduler_task_remove(p_fn_t task_function)
 {
-    uint8_t u8_index = 0;
+    uint8_t u8_index;
+    bool_t b_found_flag = false;
     // Shift the rest of the tasks after word to the this task place
-    for (u8_index = task_id; u8_index < (gu8_internalTaskCounter - 1); u8_index++)
+    for (u8_index = 0; u8_index < (gu8_internalTaskCounter - 1); u8_index++)
     {
-        gArr_TaskHandler[u8_index].delay_ms = gArr_TaskHandler[u8_index + 1].delay_ms;
-        gArr_TaskHandler[u8_index].periodicity_ms = gArr_TaskHandler[u8_index + 1].periodicity_ms;
-        gArr_TaskHandler[u8_index].internal_tick = gArr_TaskHandler[u8_index + 1].internal_tick;
-        gArr_TaskHandler[u8_index].function = gArr_TaskHandler[u8_index + 1].function;
-        gArr_TaskHandler[u8_index].args = gArr_TaskHandler[u8_index + 1].args;
-        gArr_TaskHandler[u8_index].id = u8_index;
+        if (gArr_TaskHandler[u8_index].function == task_function)
+        {
+            b_found_flag = true;
+        }
+
+        if (b_found_flag == true)
+        {
+            gArr_TaskHandler[u8_index].delay_ms = gArr_TaskHandler[u8_index + 1].delay_ms;
+            gArr_TaskHandler[u8_index].periodicity_ms = gArr_TaskHandler[u8_index + 1].periodicity_ms;
+            gArr_TaskHandler[u8_index].function = gArr_TaskHandler[u8_index + 1].function;
+            gArr_TaskHandler[u8_index].args = gArr_TaskHandler[u8_index + 1].args;
+        }
     }
+    /* reinitialize the first empty spot */
     gu8_internalTaskCounter--;
+    gArr_TaskHandler[gu8_internalTaskCounter].delay_ms = 0;
+    gArr_TaskHandler[gu8_internalTaskCounter].periodicity_ms = 0;
+    gArr_TaskHandler[gu8_internalTaskCounter].function = NULL;
+    gArr_TaskHandler[gu8_internalTaskCounter].args = NULL;
 }
