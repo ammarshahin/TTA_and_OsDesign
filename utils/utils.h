@@ -52,6 +52,8 @@
         counter = 0;                            \
     } while (0)
 
+typedef void (*p_fn_t)(void *);
+
 void utils_ftoa(float x, uint8_t *a);
 void utils_itoa(int32_t n, uint8_t s[]);
 void utils_uitoa(uint32_t n, uint8_t s[]);

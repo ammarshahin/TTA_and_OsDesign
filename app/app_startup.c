@@ -1,17 +1,25 @@
-#include "bsp.h"
+#include "os.h"
+#include "app_startup.h"
+#include "app_debug.h"
+#include "app.h"
 #include "config.h"
-#include "def.h"
-#include "utils.h"
-#include "gpio.h"
 #include "heartbeat.h"
+#include "gpio.h"
+#include "bsp.h"
+#include "mcal.h"
+#include "doutput_module.h"
+#include "../component/dinput_module/dinput_module.h"
+#include "utils.h"
 
 void app_startup_init(void)
 {
-	//
+    //
 }
 
 void app_startupTasks_create(void)
 {
+    os_scheduler_task_add(dinputModule_update, NULL, 0, DINPUT_MODULE_UPDATE_PERIOD_MS);
+    os_scheduler_task_add(doutputModule_update, NULL, 0, DOUTPUT_MODULE_UPDATE_PERIOD_MS);
 #if 0
     os_scheduler_task_add(dinputModule_update, NULL, 0, 1);
     os_scheduler_task_add(app_buzzer_update, NULL, 0, APP_BUZZER_UPDATE_PERIOD);

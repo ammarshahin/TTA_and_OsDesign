@@ -10,9 +10,9 @@
 #include "def.h"
 #include "avr/io.h"
 #include "avr/interrupt.h"
-#include "util/delay.h"
+//#include "util/delay.h"
 //#include "util/twi.h"
-//#include "avr/wdt.h"
+#include "avr/wdt.h"
 //#include "avr/common.h"
 
 typedef volatile uint8_t *const reg_type;
@@ -89,6 +89,8 @@ void mcal_gpio_altFunction_set(mcal_gpio_t *px_gpio, mcal_gpio_alternateFnEnum_t
 
 /********************************************************************************/
 // uart
+#define MAX_UART_BUFFER_SIZE (10u)
+#define mcal_uart_interrupt() ISR(USART_RX_vect)
 
 /* CORE */
 #define UART_DATA_REG (UDR0)
@@ -247,6 +249,7 @@ void mcal_uart_data_put(mcal_uart_t x_uart, uint8_t u8_data);
 uint8_t mcal_uart_data_get(mcal_uart_t x_uart);
 void mcal_uart_string_put(mcal_uart_t x_uart, uint8_t *pu8_ptr);
 void mcal_uart_string_get(mcal_uart_t x_uart, uint8_t *pu8_ptr);
+uint8_t mcal_uart_data_receivedFlag_get(mcal_uart_t x_uart);
 
 /********************************************************************************/
 // timer
@@ -338,7 +341,8 @@ void mcal_timer_timerModeMS_init(mcal_timer_t *px_tb, uint32_t u32_timeMS);
 void mcal_timer_eventMode_init(mcal_timer_t *px_tb, mcal_gpio_t *px_portConfig, mcal_timer_eventEdgeConfig_t x_edge);
 void mcal_timer_softWareCap(mcal_timer_t *px_tb);
 */
-#define mcal_systick_int() ISR(TIMER0_OVF_vect)
+#define mcal_systick_overflow_int() ISR(TIMER0_OVF_vect)
+#define mcal_systick_compareA_int() ISR(TIMER0_COMPA_vect)
 /********************************************************************************/
 // pwm
 typedef enum
@@ -435,10 +439,56 @@ void mcal_sysTick_init(void);
 void mcal_sysTick_set(uint32_t u32_tickms);
 void mcal_sysTick_start(void);
 void mcal_sysTick_stop(void);
+uint8_t mcal_sysTick_flag_get(void);
+void mcal_sysTick_flag_clear(void);
 
 #define MCAL_SYSTICK_TIMER_CHANNEL MCAL_TIMER_0
 
 #define globalInterrupts_On() sei()
 #define globalInterrupts_Off() cli()
+
+/***************************************************************/
+// WDT
+// NOTE: the wdt should be disabled on startup so it wont reset until the system is fully up. then enable the wdt and assign a task that feeds the wdt regularly
+#define WDT_CTRL_REG (WDTCSR)
+
+// NOTE: due to it being extended to an asm version there can't be preceeding spaces in the #define
+#define WDT_FEED() wdt_reset()
+
+#define WDT_ENABLE()                  \
+    do                                \
+    {                                 \
+        globalInterrupts_Off();       \
+        BIT_SET(MCU_STATE_REG, WDRF); \
+        BIT_SET(WDT_CTRL_REG, WDE);   \
+        BIT_CLR(WDT_CTRL_REG, 0);     \
+        BIT_CLR(WDT_CTRL_REG, 1);     \
+        BIT_CLR(WDT_CTRL_REG, 2);     \
+        BIT_SET(WDT_CTRL_REG, 5);     \
+        globalInterrupts_On();        \
+    } while (0)
+
+// BIT_SET(MCU_STATE_REG, WDRF);
+// BIT_SET(WDT_CTRL_REG, WDE);
+#define WDT_DISABLE() (wdt_disable())
+// NOTE: it is a must to clear the wdt flag after a reset due to wdt reset
+#define WDT_FLAG_CLEAR() (MCUCSR &= ~(1 << 3))
+
+void mcal_wdt_init(void);
+void mcal_wdt_set(uint32_t resetTime);
+void mcal_wdt_feed(void);
+void mcal_wdt_disable(void);
+/***************************************************************/
+// SYSTEM
+#define MCU_STATE_REG (MCUSR)
+#define MCU_STATE_REG_GET() (MCUCSR)
+#define MCU_STATE_REG_CLEAR() (MCUCSR = 0)
+
+#define SYS_INIT()        \
+    do                    \
+    {                     \
+        WDT_FLAG_CLEAR(); \
+        WDT_DISABLE();    \
+    } while (0)
 
 #endif
