@@ -1,10 +1,10 @@
 # Driver Design
 
-## - This repo is a side project I'm working on to develop my driver design skills as well as implementing the TTA system and the OS corporative scheduler.
+- Implementing the TTA system and the OS corporative scheduler.
 
-## - I'm using the atmega328p microcontroller programmed by an usbasp and a simple makefile.
+- Using atmega328p microcontroller programmed by an usbasp and a simple makefile.
 
-# Resources:
+### Resources:
 
-- Atmga328p Datasheet
+- Atmega328p Datasheet
 - Patterns for Time-Triggered Embedded Systems\_ Building Reliable Applications with the 8051 Family of Microcontrollers.

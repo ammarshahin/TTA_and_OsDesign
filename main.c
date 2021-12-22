@@ -18,7 +18,7 @@ int main(void)
 
 #if APP_USE_WDT == 1
     mcal_wdt_init();
-    //wdt_init();
+    // wdt_init();
     // os_scheduler_task_add(wdt_update, NULL, 0, WDT_UPDATE_PERIOD_MS);
 #endif
 
@@ -28,7 +28,7 @@ int main(void)
 
     while (1)
     {
-        // The code shouldn't reach this point never
+        // The code shouldn't ever reach this point
     }
     return 0;
 }
