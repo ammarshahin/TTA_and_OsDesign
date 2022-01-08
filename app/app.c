@@ -9,6 +9,8 @@
 #include "mcal.h"
 #include "doutput_module.h"
 #include "dinput_module.h"
+#include "Sw_uart.h"
+#include "comm_manger.h"
 #include "utils.h"
 
 static void sysHealth_update(void *arg);
@@ -29,7 +31,7 @@ void app_init(void)
 #endif
 
     app_tasks_create();
-    //LOG_I("App Init Done..!");
+    // LOG_I("App Init Done..!");
 }
 
 static void sysHealth_update(void *arg)
@@ -39,5 +41,6 @@ static void sysHealth_update(void *arg)
 
 static void app_tasks_create(void)
 {
-    //
+    os_scheduler_task_add(sw_uart_update, NULL, 0, SW_UART_INTERNAL_UPDATE_PERIOD_MS);
+    os_scheduler_task_add(comm_manger_update, NULL, 0, COMM_MANGER_UPDATE_PERIOD_MS);
 }
