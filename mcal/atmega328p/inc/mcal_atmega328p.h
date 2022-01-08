@@ -392,26 +392,11 @@ void mcal_pwm_channel_disable(mcal_pwmConfig_t *pwmCfg);
 typedef enum
 {
     MCAL_ADC_CH0 = 0U,
-    MCAL_ADC_CH1 = 1U,
-    MCAL_ADC_CH2 = 2U,
-    MCAL_ADC_CH3 = 3U,
-    MCAL_ADC_CH4 = 4U,
-    MCAL_ADC_CH5 = 5U,
-    MCAL_ADC_CH6,
-    MCAL_ADC_CH7,
-    MCAL_ADC_CH8,
-    MCAL_ADC_CH9,
-    MCAL_ADC_CH10,
-    MCAL_ADC_CH11,
-    MCAL_ADC_CH12,
-    MCAL_ADC_CH13,
-    MCAL_ADC_CH14,
-    MCAL_ADC_CH15,
-    MCAL_ADC_CH16,
-    MCAL_ADC_CH17,
-    MCAL_ADC_CH18,
-    MCAL_ADC_CH19,
-    MCAL_ADC_CH20
+    MCAL_ADC_CH1,
+    MCAL_ADC_CH2,
+    MCAL_ADC_CH3,
+    MCAL_ADC_CH4,
+    MCAL_ADC_CH5,
 } mcal_adc_chEnum_t;
 
 // TODO: redo these values
@@ -429,12 +414,12 @@ void mcal_adc_flag_clear(mcal_adc_blkEnum_t *x_adcBlock, mcal_adc_chEnum_t x_adc
 
 /********************************************************************************/
 // systick
-
 void mcal_sysTick_init(void);
+
 /**
  * @function: mcal_sysTick_set
  * @description: Function to set the interrupt to come every no of ms
- * @param u32_tickms the no to wait for 
+ * @param u32_tickms the no to wait for
  */
 void mcal_sysTick_set(uint32_t u32_tickms);
 void mcal_sysTick_start(void);

@@ -1,12 +1,12 @@
 /**
  * @file debug.c
- * @author your name (you@domain.com)
- * @brief 
+ * @author Ammar Shahin (ammar.shahin22@gmail.com)
+ * @brief
  * @version 0.1
  * @date 2020-12-02
- * 
+ *
  * @copyright Copyright (c) 2020
- * 
+ *
  */
 
 #include "os.h"

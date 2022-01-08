@@ -67,7 +67,7 @@
 #define EXTERNAL_EEPROM_USED (1)
 #define EEPROM_BUFFER_SIZE (150)
 
-#define WDT_RESET_MSEC (WDT_DETECT_TIME_EXP_21)   //reset time according to datasheet and clock setting = 26msec
+#define WDT_RESET_MSEC (WDT_DETECT_TIME_EXP_21)   // reset time according to datasheet and clock setting = 26msec
 
 #define ADC_RAMPUP_DELAY_PERIOD_MS (1000)   // to avoid the wrong data readings from a cold start
 
@@ -80,9 +80,8 @@
 #define DOUTPUT_MODULE_LOW_LEVEL 0
 #define DOUTPUT_MODULE_HIGH_LEVEL 1
 
-//LOG: mine
-// #define SSD_COM_ANODE 0
-// #define SSD_COM_CATHODE 1
+//  #define SSD_COM_ANODE 0
+//  #define SSD_COM_CATHODE 1
 #define SSD_COM_ANODE 1
 #define SSD_COM_CATHODE 0
 #define SSD_ON (DOUTPUT_MODULE_LOW_LEVEL)
@@ -92,8 +91,8 @@
 #define LED_MATRIX_ROW_NUMBER (8)
 #define LED_MATRIX_ON (DOUTPUT_MODULE_LOW_LEVEL)
 #define LED_MATRIX_OFF (DOUTPUT_MODULE_HIGH_LEVEL)
-//LOG: mine
-// #define LED_MATRIX_ALL_OFF (0xFF)
+// LOG: mine
+//  #define LED_MATRIX_ALL_OFF (0xFF)
 #define LED_MATRIX_ALL_OFF (0x00)
 
 #define KEYPAD_COL_NUMBER (4)
